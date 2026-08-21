@@ -44,6 +44,7 @@ const getRepNeeded = (lvl: number) => 100 + (lvl - 1) * 50;
 
 export default function Game() {
   const [cash, setCash] = useState(2850);
+  const [inventory, setInventory] = useState({ energyPacks: 0 })
   const [rep, setRep] = useState(0);
   const [level, setLevel] = useState(1);
   const [repToNext, setRepToNext] = useState(getRepNeeded(1));
@@ -159,10 +160,10 @@ export default function Game() {
       cash, rep, level, repToNext, energy, heat, health,
       skillPoints, currentLocation, progress, owned, skills,
       ledger: ledger.slice(0, 10),
-      isInJail, jailTime, isInHospital
+      isInJail, jailTime, isInHospital, inventory,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  }, [isReady, cash, rep, level, repToNext, energy, heat, health, skillPoints, currentLocation, progress, owned, skills, ledger, isInJail, jailTime, isInHospital]);
+  }, [isReady, cash, rep, level, repToNext, energy, heat, health, skillPoints, currentLocation, progress, owned, skills, ledger, isInJail, jailTime, isInHospital, inventory]);
 
   const canDoJob = (job: Job) => {
     if (isInJail || isInHospital) return false;
@@ -190,6 +191,11 @@ export default function Game() {
     if (job.id === 'ferry' && !owns('ferry_ticket') && Math.random() < 0.05) {
       setOwned((o: any) => ({ ...o, ferry_ticket: true }));
       addLog(`🎟️ RARE DROP! Ferry Ticket to Ironport!`);
+    }
+    // 5% rare energy pack drop for ANY job
+    if (Math.random() < 0.05) {
+      setInventory((inv: any) => ({ ...inv, energyPacks: (inv?.energyPacks || 0) + 1 }))
+      addLog('⚡ RARE DROP! Energy Pack +5 - sent to INVENTORY')
     }
     addLog(`Did ${job.name} +$${cashE} [${np}%]`);
   };
@@ -387,6 +393,48 @@ export default function Game() {
               })}
             </div>
           )}
+
+          {tab === 'INVENTORY' && (
+          <div className="space-y-4 max-w- w-full mr-auto ml-0">
+            <div className="bg-[#121212] border border-[#2a2a2a] rounded-lg overflow-hidden">
+              <div className="bg-[#1e1e1e] border-b border-[#2a2a2a] px-4 py-2 flex justify-between">
+                <div className="font-black text-[#f5e8c7]">INVENTORY ({inventory.energyPacks})</div>
+                <div className="text-[#666] text-xs">Rare drops</div>
+              </div>
+              <div className="p-4">
+                {inventory.energyPacks > 0 ? (
+                  <div className="flex justify-between items-center bg-[#171717] p-3 rounded border border-[#f5e8c7]/20">
+                    <div className="flex gap-2 items-center">
+                      <span>⚡</span>
+                      <div>
+                        <div className="font-bold text-[#ddd]">Energy Pack</div>
+                        <div className="text-xs text-[#888]">+5 Energy</div>
+                      </div>
+                      <span className="ml-2 text-[#f5e8c7] font-black">x{inventory.energyPacks}</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (inventory.energyPacks <= 0) return;
+                        if (energy >= maxEnergy) { addLog('Energy already full'); return; }
+                        setInventory((i: any) => ({ ...i, energyPacks: i.energyPacks - 1 }))
+                        setEnergy((e: number) => Math.min(e + 5, maxEnergy))
+                        addLog('Used Energy Pack +5 energy')
+                      }}
+                      className="px-4 py-1.5 rounded-full bg-[#f5e8c7] text-black font-black text-xs"
+                    >
+                      USE
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-8 text-center text-[#666] text-sm">
+                    Empty - do hustles for a 5% chance to find Energy Packs
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
           {tab === 'SKILLS' && (
             <div className="space-y-2">
               <div className="bg-[#171717] rounded-lg p-4 border border-[#f5c842]/30 text-"><span className="font-black">YOU HAVE {skillPoints} POINTS</span> <span className="text-[#666]">- LVL {level} → {level + 1} needs {repToNext} REP</span></div>
@@ -397,18 +445,7 @@ export default function Game() {
           )}
         </div>
 
-        {tab === 'INVENTORY' && (
-          <div className="space-y-4">
-            <div className="bg-[#121212] border border-[#2a2a2a] rounded-lg overflow-hidden">
-              <div className="bg-[#1e1e1e] border-b border-[#2a2a2a] px-4 py-2">
-                <div className="text- font-black text-[#f5e8c7]">INVENTORY</div>
-              </div>
-              <div className="p-8 text-center text-[#666] text-sm">
-                Empty for now - gear and items will show here.
-              </div>
-            </div>
-          </div>
-        )}
+        
 
 
         {/* RIGHT LEDGER - STICKY */}
