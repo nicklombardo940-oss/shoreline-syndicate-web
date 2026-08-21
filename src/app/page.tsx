@@ -268,7 +268,7 @@ export default function Game() {
         </div>
       )}
 
-      <div className="bg-[#1a1a1a] border-b border-[#222] px-6 py-2 flex gap-4 text-[15px] font-bold flex-wrap items-center">
+      <div className="bg-[#1a1a1a] border-b border-[#222] px-6 py-2 flex gap-4 text- font-bold flex-wrap items-center w-full max-w-full overflow-hidden">
         <span className="text-[#f5e8c7]">💰 CASH ${cash.toFixed(0)}</span>
         <span className="flex items-center gap-2">
           <span className="text-[#e05a5a]">♥ {health}/{maxHealth}</span>
@@ -285,7 +285,7 @@ export default function Game() {
         {skillPoints > 0 && <button onClick={() => setTab('SKILLS')} className="ml-auto bg-[#f5c842] text-black px-3 py-0.5 rounded-full animate-pulse hover:bg-[#ffe082]">{skillPoints} SKILL POINTS</button>}
       </div>
 
-      <div className="bg-[#121212] border-b border-[#222] px-6 py-2 flex gap-2">
+      <div className="bg-[#121212] border-b border-[#222] px-6 py-2 flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide w-full max-w-full">
         {(['HUSTLES', 'SHOP', 'SKILLS', 'INVENTORY'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)} className={`px-5 py-1.5 rounded text-[15px] font-black border flex items-center gap-2 ${tab === t ? 'bg-[#f5e8c7] text-black border-[#f5e8c7]' : 'bg-[#1e1e1e] text-[#666] border-[#2a2a2a]'}`}>
             {t}
