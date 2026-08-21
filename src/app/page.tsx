@@ -24,9 +24,9 @@ const JOBS: Job[] = [
 
 const ITEMS: Item[] = [
   { id: 'box_cutter', name: 'Box Cutter', type: 'tool', cost: 250, desc: 'Opens boxes and mouths.', icon: '🔪' },
-  { id: 'brass_knuckles', name: 'Brass Knuckles', type: 'weapon', cost: 650, desc: 'For arcade punks.', icon: '🥊' },
+  { id: 'dock_hook', name: 'Dock Hook', type: 'weapon', cost: 650, desc: 'Fish market enforcement.', icon: '🪝' },
+  { id: 'brass_knuckles', name: 'Brass Knuckles', type: 'weapon', cost: 800, desc: 'For arcade punks.', icon: '🥊' },
   { id: 'bolt_cutters', name: 'Bolt Cutters', type: 'tool', cost: 950, desc: 'Bait shop locks are cheap.', icon: '🔧' },
-  { id: 'dock_hook', name: 'Dock Hook', type: 'weapon', cost: 800, desc: 'Fish market enforcement.', icon: '🪝' },
   { id: 'skiff', name: 'Borrowed Skiff', type: 'vehicle', cost: 1200, desc: 'Quiet harbor moves.', icon: '🛶' },
   { id: 'burner_phone', name: 'Burner Phone', type: 'tool', cost: 1800, desc: 'Motel and diner calls.', icon: '📞' },
   { id: 'motel_master_key', name: 'Motel Master Key', type: 'tool', cost: 2400, desc: 'Every room is your room.', icon: '🔑' },
@@ -59,7 +59,7 @@ export default function Game() {
   const [isInJail, setIsInJail] = useState(false);
   const [jailTime, setJailTime] = useState(0);
   const [isInHospital, setIsInHospital] = useState(false);
-  const [tab, setTab] = useState<'HUSTLES' | 'SHOP' | 'SKILLS'>('HUSTLES');
+  const [tab, setTab] = useState<'HUSTLES' | 'SHOP' | 'SKILLS' | 'INVENTORY'>('HUSTLES')
   const [isReady, setIsReady] = useState(false);
 
 
@@ -126,43 +126,43 @@ export default function Game() {
 
   // LOAD - runs once after hydration
   // LOAD - runs once
-useEffect(() => {
-  const raw = localStorage.getItem(SAVE_KEY);
-  if (raw) {
-    try {
-      const s = JSON.parse(raw);
-      if (s.cash !== undefined) setCash(s.cash);
-      if (s.rep !== undefined) setRep(s.rep);
-      if (s.level !== undefined) setLevel(s.level);
-      if (s.repToNext !== undefined) setRepToNext(s.repToNext);
-      if (s.energy !== undefined) setEnergy(s.energy);
-      if (s.heat !== undefined) setHeat(s.heat);
-      if (s.health !== undefined) setHealth(s.health);
-      if (s.skillPoints !== undefined) setSkillPoints(s.skillPoints);
-      if (s.currentLocation) setCurrentLocation(s.currentLocation);
-      if (s.progress) setProgress(s.progress);
-      if (s.owned) setOwned(s.owned);
-      if (s.skills) setSkills(s.skills);
-      if (s.ledger) setLedger(s.ledger);
-      if (s.isInJail !== undefined) setIsInJail(s.isInJail);
-      if (s.jailTime !== undefined) setJailTime(s.jailTime);
-      if (s.isInHospital !== undefined) setIsInHospital(s.isInHospital);
-    } catch {}
-  }
-  setIsReady(true);
-}, []);
+  useEffect(() => {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) {
+      try {
+        const s = JSON.parse(raw);
+        if (s.cash !== undefined) setCash(s.cash);
+        if (s.rep !== undefined) setRep(s.rep);
+        if (s.level !== undefined) setLevel(s.level);
+        if (s.repToNext !== undefined) setRepToNext(s.repToNext);
+        if (s.energy !== undefined) setEnergy(s.energy);
+        if (s.heat !== undefined) setHeat(s.heat);
+        if (s.health !== undefined) setHealth(s.health);
+        if (s.skillPoints !== undefined) setSkillPoints(s.skillPoints);
+        if (s.currentLocation) setCurrentLocation(s.currentLocation);
+        if (s.progress) setProgress(s.progress);
+        if (s.owned) setOwned(s.owned);
+        if (s.skills) setSkills(s.skills);
+        if (s.ledger) setLedger(s.ledger);
+        if (s.isInJail !== undefined) setIsInJail(s.isInJail);
+        if (s.jailTime !== undefined) setJailTime(s.jailTime);
+        if (s.isInHospital !== undefined) setIsInHospital(s.isInHospital);
+      } catch { }
+    }
+    setIsReady(true);
+  }, []);
 
-// AUTOSAVE - only runs AFTER isReady is true
-useEffect(() => {
-  if (!isReady) return;
-  const data = {
-    cash, rep, level, repToNext, energy, heat, health,
-    skillPoints, currentLocation, progress, owned, skills,
-    ledger: ledger.slice(0, 10),
-    isInJail, jailTime, isInHospital
-  };
-  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-}, [isReady, cash, rep, level, repToNext, energy, heat, health, skillPoints, currentLocation, progress, owned, skills, ledger, isInJail, jailTime, isInHospital]);
+  // AUTOSAVE - only runs AFTER isReady is true
+  useEffect(() => {
+    if (!isReady) return;
+    const data = {
+      cash, rep, level, repToNext, energy, heat, health,
+      skillPoints, currentLocation, progress, owned, skills,
+      ledger: ledger.slice(0, 10),
+      isInJail, jailTime, isInHospital
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  }, [isReady, cash, rep, level, repToNext, energy, heat, health, skillPoints, currentLocation, progress, owned, skills, ledger, isInJail, jailTime, isInHospital]);
 
   const canDoJob = (job: Job) => {
     if (isInJail || isInHospital) return false;
@@ -242,7 +242,7 @@ useEffect(() => {
       </div>
 
       <div className="bg-[#121212] border-b border-[#222] px-6 py-2 flex gap-2">
-        {(['HUSTLES', 'SHOP', 'SKILLS'] as const).map(t => (
+        {(['HUSTLES', 'SHOP', 'SKILLS', 'INVENTORY'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)} className={`px-5 py-1.5 rounded text- font-black border flex items-center gap-2 ${tab === t ? 'bg-[#f5e8c7] text-black border-[#f5e8c7]' : 'bg-[#1e1e1e] text-[#666] border-[#2a2a2a]'}`}>
             {t}
             {t === 'SKILLS' && skillPoints > 0 && (
@@ -396,6 +396,20 @@ useEffect(() => {
             </div>
           )}
         </div>
+
+        {tab === 'INVENTORY' && (
+          <div className="space-y-4">
+            <div className="bg-[#121212] border border-[#2a2a2a] rounded-lg overflow-hidden">
+              <div className="bg-[#1e1e1e] border-b border-[#2a2a2a] px-4 py-2">
+                <div className="text- font-black text-[#f5e8c7]">INVENTORY</div>
+              </div>
+              <div className="p-8 text-center text-[#666] text-sm">
+                Empty for now - gear and items will show here.
+              </div>
+            </div>
+          </div>
+        )}
+
 
         {/* RIGHT LEDGER - STICKY */}
         <div className="lg:sticky lg:top-6 h-fit space-y-3">
