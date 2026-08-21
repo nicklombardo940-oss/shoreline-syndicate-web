@@ -187,6 +187,19 @@ export default function Game() {
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   }, [isReady, cash, rep, level, repToNext, energy, heat, health, skillPoints, currentLocation, progress, owned, skills, ledger, isInJail, jailTime, isInHospital, inventory]);
 
+  useEffect(() => {
+    const fixHeight = () => {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    };
+    fixHeight();
+    window.addEventListener('resize', fixHeight);
+    window.addEventListener('orientationchange', fixHeight);
+    return () => {
+      window.removeEventListener('resize', fixHeight);
+      window.removeEventListener('orientationchange', fixHeight);
+    };
+  }, []);
+
   const canDoJob = (job: Job) => {
     if (isInJail || isInHospital) return false;
     const extra = heat >= 85 ? 3 : heat >= 60 ? 2 : heat >= 40 ? 1 : 0;
@@ -240,7 +253,7 @@ export default function Game() {
   const spendPoint = (skill: keyof typeof skills) => { if (skillPoints <= 0) return; setSkills((s: any) => ({ ...s, [skill]: s[skill] + 1 })); setSkillPoints((p: number) => p - 1); };
 
   return (
-    <div className="min-h-screen bg-[#0e0e0e] text-white font-mono">
+    <div className="min-h-[100dvh] w-full overflow-x-hidden bg-[#0e0e0e] text-[#f5e8c7]">
       <div className="w-full flex justify-center py-0 bg-[#0e0e0e] border-b border-[#222]">
         <img src="/logo.png" alt="SHORELINE" className="h-[120px] md:h-[240px] w-auto object-contain -my-8 drop-shadow-[0_0_15px_rgba(245,232,199,0.3)]" />
       </div>
@@ -344,7 +357,7 @@ export default function Game() {
                 const totalEng = job.eng + extra;
 
                 return (
-                  <div key={job.id} className={`grid grid-cols-1 lg:grid-cols-[2.2fr_1fr_1.2fr_120px] px-4 py-3 border-b border-[#1a1a1a] gap-3 lg:gap-0 lg:items-center ${locked? 'opacity-50 bg-[#111]' : 'bg-[#151515] hover:bg-[#1a1a1a]'} text-`}>
+                  <div key={job.id} className={`grid grid-cols-1 lg:grid-cols-[2.2fr_1fr_1.2fr_120px] px-4 py-3 border-b border-[#1a1a1a] gap-3 lg:gap-0 lg:items-center ${locked ? 'opacity-50 bg-[#111]' : 'bg-[#151515] hover:bg-[#1a1a1a]'} text-`}>
                     <div className="flex gap-3">
                       <div className="text-xl">{job.icon}</div>
                       <div>
