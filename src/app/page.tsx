@@ -1,66 +1,66 @@
 "use client";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 type Job = { id: string; name: string; area: string; lvl: number; eng: number; cashMin: number; cashMax: number; rep: number; heat: number; order: number; needs: string[]; desc: string; icon: string; };
 type Item = { id: string; name: string; type: 'tool' | 'vehicle' | 'weapon'; cost: number; desc: string; icon: string; };
 
 const JOBS: Job[] = [
-  { id: 'marina', name: 'RUN THE MARINA', area: 'Port Haven', lvl: 1, eng: 1, cashMin: 140, cashMax: 210, rep: 8, heat: 1, order: 0, needs: [], desc: 'Shake down charter captains.', icon: '⚓' },
-  { id: 'cherries', name: 'SMUGGLE CHERRIES', area: 'Port Haven', lvl: 2, eng: 3, cashMin: 280, cashMax: 420, rep: 15, heat: 2, order: 1, needs: ['box_cutter'], desc: 'Truckload past checkpoint.', icon: '🍒' },
-  { id: 'flavors', name: 'COLLECT AT Salty Cow Creamery', area: 'Port Haven', lvl: 3, eng: 5, cashMin: 520, cashMax: 740, rep: 22, heat: 3, order: 2, needs: ['skiff'], desc: 'Ice cream parlor owes protection.', icon: '🍦' },
-  { id: 'ferry', name: 'MIDNIGHT FERRY RUN', area: 'Port Haven', lvl: 5, eng: 7, cashMin: 920, cashMax: 1280, rep: 35, heat: 4, order: 3, needs: ['dock_hook', 'harbor_runner'], desc: 'Ironport crossing.', icon: '⛴' },
-  { id: 'statepark', name: 'SECURE STATE PARK', area: 'Port Haven', lvl: 7, eng: 9, cashMin: 1500, cashMax: 2200, rep: 50, heat: 5, order: 4, needs: ['harbor_runner'], desc: 'Snack stands work for you now.', icon: '🌲' },
-  { id: 'bait_shop', name: 'SHAKE DOWN BAIT SHOP', area: 'Port Haven', lvl: 9, eng: 12, cashMin: 600, cashMax: 900, rep: 28, heat: 6, order: 5, needs: ['bolt_cutters'], desc: 'Worm buckets and cash register.', icon: '🪱' },
-  { id: 'arcade', name: 'RUN THE ARCADE', area: 'Port Haven', lvl: 11, eng: 15, cashMin: 850, cashMax: 1200, rep: 32, heat: 7, order: 6, needs: ['brass_knuckles'], desc: 'Tourist kids losing quarters.', icon: '🕹' },
-  { id: 'fish_market', name: 'SECURE FISH MARKET', area: 'Port Haven', lvl: 13, eng: 18, cashMin: 1300, cashMax: 1900, rep: 45, heat: 8, order: 7, needs: ['dock_hook', 'bolt_cutters'], desc: 'Morning catch tax.', icon: '🐟' },
-  { id: 'harbor_motel', name: 'TAKE OVER MOTEL', area: 'Port Haven', lvl: 15, eng: 15, cashMin: 1700, cashMax: 2400, rep: 72, heat: 9, order: 8, needs: ['motel_master_key', 'burner_phone'], desc: 'Rent by the hour, pay by the week.', icon: '🏨' },
-  { id: 'diner', name: 'SKIM THE DINER', area: 'Port Haven', lvl: 18, eng: 24, cashMin: 2000, cashMax: 2800, rep: 62, heat: 10, order: 9, needs: ['burner_phone', 'box_cutter'], desc: 'Main Wharf greasy spoon.', icon: '🍳' },
-  { id: 'car_wash', name: 'CONTROL THE CAR WASH', area: 'Port Haven', lvl: 21, eng: 24, cashMin: 2600, cashMax: 3600, rep: 75, heat: 11, order: 10, needs: ['rusted_pickup', 'fuel_siphon'], desc: 'Launder money and trucks.', icon: '🚿' },
-  { id: 'fuel_dock', name: 'HEIST THE FUEL DOCK', area: 'Port Haven', lvl: 24, eng: 27, cashMin: 3200, cashMax: 4500, rep: 85, heat: 12, order: 11, needs: ['fuel_siphon', 'harbor_runner'], desc: 'Diesel is liquid gold.', icon: '⛽' },
-  { id: 'mini_golf', name: 'RIG THE MINI GOLF', area: 'Port Haven', lvl: 27, eng: 25, cashMin: 3800, cashMax: 5200, rep: 95, heat: 13, order: 12, needs: ['golf_cart', 'bolt_cutters'], desc: 'Windmill hole always wins.', icon: '⛳' },
-  { id: 'souvenir_row', name: 'OWN SOUVENIR ROW', area: 'Port Haven', lvl: 30, eng: 24, cashMin: 4500, cashMax: 6200, rep: 110, heat: 14, order: 13, needs: ['bait_trawler', 'brass_knuckles'], desc: 'Tourist trap row now yours.', icon: '🎁' },
-  { id: 'harbor_bar', name: 'BUY THE HARBOR BAR', area: 'Port Haven', lvl: 33, eng: 27, cashMin: 5500, cashMax: 7800, rep: 130, heat: 15, order: 14, needs: ['bait_trawler', 'motel_master_key', 'harbor_runner'], desc: 'whole harbor drinks to you.', icon: '🍺' },
-  { id: 'boatyard', name: 'CONTROL THE BOATYARD', area: 'Port Haven', lvl: 36, eng: 28, cashMin: 6200, cashMax: 8500, rep: 145, heat: 16, order: 15, needs: ['bait_trawler', 'drydock_crane'], desc: 'Dry dock pays protection now.', icon: '🛥' },
-  { id: 'lobster_wharf', name: 'TAKE THE LOBSTER WHARF', area: 'Port Haven', lvl: 39, eng: 30, cashMin: 7000, cashMax: 9500, rep: 160, heat: 17, order: 16, needs: ['bait_trawler', 'lobster_permit', 'harbor_runner'], desc: 'Lobster traps and laundering.', icon: '🦞' },
-  { id: 'lighthouse', name: 'SMUGGLE AT LIGHTHOUSE', area: 'Port Haven', lvl: 42, eng: 31, cashMin: 8000, cashMax: 11000, rep: 175, heat: 18, order: 17, needs: ['lighthouse_key', 'burner_phone'], desc: 'Beacon is your drop point.', icon: '🗼' },
-  { id: 'cannery', name: 'RUN THE CANNERY', area: 'Port Haven', lvl: 45, eng: 32, cashMin: 9000, cashMax: 12500, rep: 190, heat: 19, order: 18, needs: ['cannery_press', 'rusted_pickup', 'fuel_siphon'], desc: 'Fish cannery front for product.', icon: '🥫' },
-  { id: 'yacht_club', name: 'SHAKE DOWN YACHT CLUB', area: 'Port Haven', lvl: 48, eng: 33, cashMin: 10200, cashMax: 14000, rep: 210, heat: 20, order: 19, needs: ['yacht_keys', 'golf_cart', 'motel_master_key'], desc: 'Rich kids pay to dock.', icon: '⛵' },
-  { id: 'customs_dock', name: 'HEIST CUSTOMS DOCK', area: 'Port Haven', lvl: 51, eng: 34, cashMin: 11500, cashMax: 15800, rep: 230, heat: 21, order: 20, needs: ['customs_badge', 'harbor_runner', 'dock_hook'], desc: 'Containers full of untaxed goods.', icon: '📦' },
-  { id: 'harbor_casino', name: 'RIG HARBOR CASINO', area: 'Port Haven', lvl: 54, eng: 35, cashMin: 13000, cashMax: 17500, rep: 250, heat: 22, order: 21, needs: ['casino_ledger', 'brass_knuckles', 'burner_phone'], desc: 'House always loses now.', icon: '🎰' },
-  { id: 'shipyard', name: 'OWN THE SHIPYARD', area: 'Port Haven', lvl: 57, eng: 36, cashMin: 14500, cashMax: 19500, rep: 270, heat: 23, order: 22, needs: ['drydock_crane', 'cannery_press', 'fuel_siphon'], desc: 'Every hull in the harbor is yours.', icon: '🚢' },
-  { id: 'port_authority', name: 'BUY PORT AUTHORITY', area: 'Port Haven', lvl: 60, eng: 38, cashMin: 16500, cashMax: 22000, rep: 295, heat: 24, order: 23, needs: ['customs_badge', 'yacht_keys', 'bait_trawler'], desc: 'You ARE the harbor now.', icon: '🏛' },
-  { id: 'harbor_empire', name: 'HARBOR EMPIRE', area: 'Port Haven', lvl: 64, eng: 40, cashMin: 18500, cashMax: 25000, rep: 320, heat: 25, order: 24, needs: ['drydock_crane', 'lobster_permit', 'lighthouse_key', 'cannery_press', 'casino_ledger'], desc: 'Final - Port Haven bows to you.', icon: '👑' },
+  { id: 'marina', name: 'RUN THE MARINA', area: 'Port Haven', lvl: 1, eng: 2, cashMin: 85, cashMax: 130, rep: 8, heat: 1, order: 0, needs: [], desc: 'Shake down charter captains.', icon: '⚓' },
+  { id: 'cherries', name: 'SMUGGLE CHERRIES', area: 'Port Haven', lvl: 3, eng: 4, cashMin: 170, cashMax: 260, rep: 14, heat: 2, order: 1, needs: ['box_cutter'], desc: 'Truckload past checkpoint.', icon: '🍒' },
+  { id: 'flavors', name: 'COLLECT AT Salty Cow Creamery', area: 'Port Haven', lvl: 6, eng: 7, cashMin: 320, cashMax: 480, rep: 20, heat: 3, order: 2, needs: ['skiff'], desc: 'Ice cream parlor owes protection.', icon: '🍦' },
+  { id: 'ferry', name: 'MIDNIGHT FERRY RUN', area: 'Port Haven', lvl: 9, eng: 10, cashMin: 580, cashMax: 820, rep: 30, heat: 4, order: 3, needs: ['dock_hook', 'harbor_runner'], desc: 'Ironport crossing.', icon: '⛴' },
+  { id: 'statepark', name: 'SECURE STATE PARK', area: 'Port Haven', lvl: 12, eng: 13, cashMin: 900, cashMax: 1350, rep: 42, heat: 5, order: 4, needs: ['harbor_runner'], desc: 'Snack stands work for you now.', icon: '🌲' },
+  { id: 'bait_shop', name: 'SHAKE DOWN BAIT SHOP', area: 'Port Haven', lvl: 16, eng: 15, cashMin: 700, cashMax: 1050, rep: 32, heat: 6, order: 5, needs: ['bolt_cutters'], desc: 'Worm buckets and cash register.', icon: '🪱' },
+  { id: 'arcade', name: 'RUN THE ARCADE', area: 'Port Haven', lvl: 20, eng: 17, cashMin: 950, cashMax: 1350, rep: 38, heat: 7, order: 6, needs: ['brass_knuckles'], desc: 'Tourist kids losing quarters.', icon: '🕹' },
+  { id: 'fish_market', name: 'SECURE FISH MARKET', area: 'Port Haven', lvl: 24, eng: 19, cashMin: 1200, cashMax: 1750, rep: 48, heat: 8, order: 7, needs: ['dock_hook', 'bolt_cutters'], desc: 'Morning catch tax.', icon: '🐟' },
+  { id: 'harbor_motel', name: 'TAKE OVER MOTEL', area: 'Port Haven', lvl: 28, eng: 20, cashMin: 1550, cashMax: 2200, rep: 65, heat: 9, order: 8, needs: ['motel_master_key', 'burner_phone'], desc: 'Rent by the hour, pay by the week.', icon: '🏨' },
+  { id: 'diner', name: 'SKIM THE DINER', area: 'Port Haven', lvl: 33, eng: 22, cashMin: 1850, cashMax: 2600, rep: 60, heat: 10, order: 9, needs: ['burner_phone', 'box_cutter'], desc: 'Main Wharf greasy spoon.', icon: '🍳' },
+  { id: 'car_wash', name: 'CONTROL THE CAR WASH', area: 'Port Haven', lvl: 38, eng: 24, cashMin: 2350, cashMax: 3300, rep: 70, heat: 11, order: 10, needs: ['rusted_pickup', 'fuel_siphon'], desc: 'Launder money and trucks.', icon: '🚿' },
+  { id: 'fuel_dock', name: 'HEIST THE FUEL DOCK', area: 'Port Haven', lvl: 43, eng: 26, cashMin: 2900, cashMax: 4100, rep: 80, heat: 12, order: 11, needs: ['fuel_siphon', 'harbor_runner'], desc: 'Diesel is liquid gold.', icon: '⛽' },
+  { id: 'mini_golf', name: 'RIG THE MINI GOLF', area: 'Port Haven', lvl: 48, eng: 27, cashMin: 3400, cashMax: 4700, rep: 88, heat: 13, order: 12, needs: ['golf_cart', 'bolt_cutters'], desc: 'Windmill hole always wins.', icon: '⛳' },
+  { id: 'souvenir_row', name: 'OWN SOUVENIR ROW', area: 'Port Haven', lvl: 54, eng: 28, cashMin: 4100, cashMax: 5600, rep: 100, heat: 14, order: 13, needs: ['bait_trawler', 'brass_knuckles'], desc: 'Tourist trap row now yours.', icon: '🎁' },
+  { id: 'harbor_bar', name: 'BUY THE HARBOR BAR', area: 'Port Haven', lvl: 60, eng: 30, cashMin: 5000, cashMax: 7000, rep: 118, heat: 15, order: 14, needs: ['bait_trawler', 'motel_master_key', 'harbor_runner'], desc: 'whole harbor drinks to you.', icon: '🍺' },
+  { id: 'boatyard', name: 'CONTROL THE BOATYARD', area: 'Port Haven', lvl: 66, eng: 32, cashMin: 5800, cashMax: 7900, rep: 130, heat: 16, order: 15, needs: ['bait_trawler', 'drydock_crane'], desc: 'Dry dock pays protection now.', icon: '🛥' },
+  { id: 'lobster_wharf', name: 'TAKE THE LOBSTER WHARF', area: 'Port Haven', lvl: 72, eng: 34, cashMin: 6600, cashMax: 8900, rep: 145, heat: 17, order: 16, needs: ['bait_trawler', 'lobster_permit', 'harbor_runner'], desc: 'Lobster traps and laundering.', icon: '🦞' },
+  { id: 'lighthouse', name: 'SMUGGLE AT LIGHTHOUSE', area: 'Port Haven', lvl: 77, eng: 35, cashMin: 7600, cashMax: 10200, rep: 160, heat: 18, order: 17, needs: ['lighthouse_key', 'burner_phone'], desc: 'Beacon is your drop point.', icon: '🗼' },
+  { id: 'cannery', name: 'RUN THE CANNERY', area: 'Port Haven', lvl: 82, eng: 36, cashMin: 8600, cashMax: 11500, rep: 175, heat: 19, order: 18, needs: ['cannery_press', 'rusted_pickup', 'fuel_siphon'], desc: 'Fish cannery front for product.', icon: '🥫' },
+  { id: 'yacht_club', name: 'SHAKE DOWN YACHT CLUB', area: 'Port Haven', lvl: 87, eng: 38, cashMin: 9800, cashMax: 13100, rep: 195, heat: 20, order: 19, needs: ['yacht_keys', 'golf_cart', 'motel_master_key'], desc: 'Rich kids pay to dock.', icon: '⛵' },
+  { id: 'customs_dock', name: 'HEIST CUSTOMS DOCK', area: 'Port Haven', lvl: 91, eng: 40, cashMin: 11000, cashMax: 14800, rep: 215, heat: 21, order: 20, needs: ['customs_badge', 'harbor_runner', 'dock_hook'], desc: 'Containers full of untaxed goods.', icon: '📦' },
+  { id: 'harbor_casino', name: 'RIG HARBOR CASINO', area: 'Port Haven', lvl: 94, eng: 42, cashMin: 12500, cashMax: 16700, rep: 235, heat: 22, order: 21, needs: ['casino_ledger', 'brass_knuckles', 'burner_phone'], desc: 'House always loses now.', icon: '🎰' },
+  { id: 'shipyard', name: 'OWN THE SHIPYARD', area: 'Port Haven', lvl: 97, eng: 44, cashMin: 14100, cashMax: 18800, rep: 255, heat: 23, order: 22, needs: ['drydock_crane', 'cannery_press', 'fuel_siphon'], desc: 'Every hull in the harbor is yours.', icon: '🚢' },
+  { id: 'port_authority', name: 'BUY PORT AUTHORITY', area: 'Port Haven', lvl: 99, eng: 46, cashMin: 16000, cashMax: 21000, rep: 280, heat: 24, order: 23, needs: ['customs_badge', 'yacht_keys', 'bait_trawler'], desc: 'You ARE the harbor now.', icon: '🏛' },
+  { id: 'harbor_empire', name: 'HARBOR EMPIRE', area: 'Port Haven', lvl: 100, eng: 48, cashMin: 18500, cashMax: 25000, rep: 320, heat: 25, order: 24, needs: ['drydock_crane', 'lobster_permit', 'lighthouse_key', 'cannery_press', 'casino_ledger'], desc: 'Final - Port Haven bows to you.', icon: '👑' },
 ];
 
 const ITEMS: Item[] = [
-  { id: 'box_cutter', name: 'Box Cutter', type: 'tool', cost: 250, desc: 'Opens boxes and mouths.', icon: '🔪' },
-  { id: 'dock_hook', name: 'Dock Hook', type: 'weapon', cost: 650, desc: 'Fish market enforcement.', icon: '🪝' },
-  { id: 'brass_knuckles', name: 'Brass Knuckles', type: 'weapon', cost: 800, desc: 'For arcade punks.', icon: '🥊' },
-  { id: 'bolt_cutters', name: 'Bolt Cutters', type: 'tool', cost: 950, desc: 'Bait shop locks are cheap.', icon: '🔧' },
-  { id: 'skiff', name: 'Borrowed Skiff', type: 'vehicle', cost: 1200, desc: 'Quiet harbor moves.', icon: '🛶' },
-  { id: 'burner_phone', name: 'Burner Phone', type: 'tool', cost: 1800, desc: 'Motel and diner calls.', icon: '📞' },
-  { id: 'motel_master_key', name: 'Motel Master Key', type: 'tool', cost: 2400, desc: 'Every room is your room.', icon: '🔑' },
-  { id: 'harbor_runner', name: 'Harbor Runner', type: 'vehicle', cost: 2600, desc: 'Grey Lake speed.', icon: '🚤' },
-  { id: 'fuel_siphon', name: 'Fuel Siphon Kit', type: 'tool', cost: 3000, desc: 'For the fuel dock.', icon: '🛢' },
-  { id: 'rusted_pickup', name: 'Rusted Pickup', type: 'vehicle', cost: 3200, desc: 'Car wash workhorse.', icon: '🛻' },
-  { id: 'golf_cart', name: 'Golf Cart', type: 'vehicle', cost: 4500, desc: 'Mini golf patrol.', icon: '🛺' },
-  { id: 'bait_trawler', name: 'Bait Trawler', type: 'vehicle', cost: 6800, desc: 'Own the whole harbor.', icon: '🎣' },
-  { id: 'ferry_ticket', name: 'Ferry Ticket', type: 'tool', cost: 0, desc: 'Rare drop from Midnight Ferry Run. Required for Ironport.', icon: '🎟️' },
-  { id: 'drydock_crane', name: 'Drydock Crane', type: 'vehicle', cost: 8200, desc: 'Lift hulls out the water.', icon: '🏗' },
-  { id: 'lobster_permit', name: 'Harpoon Gun', type: 'weapon', cost: 9500, desc: 'For lobsters and legs.', icon: '🔱' },
-  { id: 'lighthouse_key', name: 'Lighthouse Key', type: 'tool', cost: 10800, desc: 'Top of the beacon is your stash.', icon: '🔦' },
-  { id: 'cannery_press', name: 'Fillet Cleaver', type: 'weapon', cost: 12200, desc: 'Cuts fish and problems.', icon: '🪓' },
-  { id: 'yacht_keys', name: 'Yacht Club Keys', type: 'tool', cost: 13800, desc: 'VIP slips pay double.', icon: '⛵' },
-  { id: 'customs_badge', name: 'Customs Badge', type: 'tool', cost: 15500, desc: 'Wave containers through.', icon: '🛃' },
-  { id: 'casino_ledger', name: 'Dock Slugger', type: 'weapon', cost: 17800, desc: 'Casino collections.', icon: '🏏' },
+  { id: 'box_cutter', name: 'Box Cutter', type: 'tool', cost: 400, desc: 'Opens boxes and mouths.', icon: '🔪' },
+  { id: 'dock_hook', name: 'Dock Hook', type: 'weapon', cost: 1200, desc: 'Fish market enforcement.', icon: '🪝' },
+  { id: 'brass_knuckles', name: 'Brass Knuckles', type: 'weapon', cost: 1800, desc: 'For arcade punks.', icon: '🥊' },
+  { id: 'bolt_cutters', name: 'Bolt Cutters', type: 'tool', cost: 2200, desc: 'Bait shop locks are cheap.', icon: '🔧' },
+  { id: 'skiff', name: 'Borrowed Skiff', type: 'vehicle', cost: 2800, desc: 'Quiet harbor moves.', icon: '🛶' },
+  { id: 'burner_phone', name: 'Burner Phone', type: 'tool', cost: 4200, desc: 'Motel and diner calls.', icon: '📞' },
+  { id: 'motel_master_key', name: 'Motel Master Key', type: 'tool', cost: 5500, desc: 'Every room is your room.', icon: '🔑' },
+  { id: 'harbor_runner', name: 'Harbor Runner', type: 'vehicle', cost: 7200, desc: 'Grey Lake speed.', icon: '🚤' },
+  { id: 'fuel_siphon', name: 'Fuel Siphon Kit', type: 'tool', cost: 8500, desc: 'For the fuel dock.', icon: '🛢' },
+  { id: 'rusted_pickup', name: 'Rusted Pickup', type: 'vehicle', cost: 9800, desc: 'Car wash workhorse.', icon: '🛻' },
+  { id: 'golf_cart', name: 'Golf Cart', type: 'vehicle', cost: 13500, desc: 'Mini golf patrol.', icon: '🛺' },
+  { id: 'bait_trawler', name: 'Bait Trawler', type: 'vehicle', cost: 18500, desc: 'Own the whole harbor.', icon: '🎣' },
+  { id: 'ferry_ticket', name: 'Ferry Ticket', type: 'tool', cost: 0, desc: 'Rare drop from Midnight Ferry Run. Required for Ironport.', icon: '🎟' },
+  { id: 'drydock_crane', name: 'Drydock Crane', type: 'vehicle', cost: 24000, desc: 'Lift hulls out the water.', icon: '🏗' },
+  { id: 'lobster_permit', name: 'Harpoon Gun', type: 'weapon', cost: 28500, desc: 'For lobsters and legs.', icon: '🔱' },
+  { id: 'lighthouse_key', name: 'Lighthouse Key', type: 'tool', cost: 34000, desc: 'Top of the beacon is your stash.', icon: '🔦' },
+  { id: 'cannery_press', name: 'Fillet Cleaver', type: 'weapon', cost: 39500, desc: 'Cuts fish and problems.', icon: '🪓' },
+  { id: 'yacht_keys', name: 'Yacht Club Keys', type: 'tool', cost: 47000, desc: 'VIP slips pay double.', icon: '⛵' },
+  { id: 'customs_badge', name: 'Customs Badge', type: 'tool', cost: 56000, desc: 'Wave containers through.', icon: '🛃' },
+  { id: 'casino_ledger', name: 'Dock Slugger', type: 'weapon', cost: 68000, desc: 'Casino collections.', icon: '🏏' },
 ];
 
 const LOCATIONS = ["Port Haven", "Ironport"] as const;
-const SAVE_KEY = "shoreline_save_v2";
-const getRepNeeded = (lvl: number) => 100 + (lvl - 1) * 50;
+const SAVE_KEY = "shoreline_save_v3_long";
+const getRepNeeded = (lvl: number) => 150 + (lvl - 1) * 85 + Math.floor(Math.pow(lvl, 2) * 1.8);
 
 export default function Game() {
-  const [cash, setCash] = useState(2850);
+  const [cash, setCash] = useState(950);
   const [inventory, setInventory] = useState({ energyPacks: 0 })
   const [rep, setRep] = useState(0);
   const [level, setLevel] = useState(1);
@@ -68,12 +68,13 @@ export default function Game() {
   const [energy, setEnergy] = useState(25);
   const [heat, setHeat] = useState(0);
   const [health, setHealth] = useState(100);
+  const [energyTimer, setEnergyTimer] = useState(22);
   const [skillPoints, setSkillPoints] = useState(0);
   const [currentLocation, setCurrentLocation] = useState<string>("Port Haven");
   const [progress, setProgress] = useState<Record<string, number>>({ marina: 0 });
   const [owned, setOwned] = useState<Record<string, number>>({});
   const [skills, setSkills] = useState({ toughness: 0, endurance: 0, stamina: 0, muscle: 0, cool: 0 });
-  const [ledger, setLedger] = useState<string[]>(['Washed up with $2,850. Build an empire.']);
+  const [ledger, setLedger] = useState<string[]>(['Washed up with $950. Build an empire.']);
   const [isInJail, setIsInJail] = useState(false);
   const [jailTime, setJailTime] = useState(0);
   const [isInHospital, setIsInHospital] = useState(false);
@@ -93,8 +94,19 @@ export default function Game() {
   const filteredJobs = JOBS.filter((j: any) => j.area === currentLocation);
 
   useEffect(() => {
-    const e = setInterval(() => setEnergy((v: number) => Math.min(maxEnergy, v + 1)), 15000);
-    const h = setInterval(() => setHeat((v: number) => Math.max(0, v - 2)), 25000);
+    const e = setInterval(() => {
+      setEnergyTimer((prev) => {
+        if (prev <= 1) {
+          setEnergy((en: number) => {
+            if (en < maxEnergy) return en + 1;
+            return en;
+          });
+          return 22;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    const h = setInterval(() => setHeat((v: number) => Math.max(0, v - 1)), 35000);
     return () => { clearInterval(e); clearInterval(h); }
   }, [maxEnergy]);
 
@@ -220,7 +232,7 @@ export default function Game() {
     const heatGain = Math.floor(job.heat * (1 - heatReduction));
     setCash((c: number) => c + cashE); setEnergy((e: number) => e - (job.eng + extraEnergyCost)); setRep((r: number) => r + job.rep); setHeat((h: number) => Math.min(100, h + heatGain));
     if (hpDamage > 0) { setHealth((h: number) => Math.max(0, h - hpDamage)); addLog(`🔥 HEAT BURN -${hpDamage} HP`); }
-    const np = Math.min(100, (progress[job.id] || 0) + 10);
+    const np = Math.min(100, (progress[job.id] || 0) + 5);
     setProgress((p: any) => ({ ...p, [job.id]: np }));
     // Rare ticket drop - 5% chance from ferry job
     if (job.id === 'ferry' && !owns('ferry_ticket') && Math.random() < 0.05) {
@@ -230,6 +242,7 @@ export default function Game() {
     // 5% rare energy pack drop for ANY job
     if (Math.random() < 0.05) {
       setInventory((inv: any) => ({ ...inv, energyPacks: (inv?.energyPacks || 0) + 1 }))
+      setEnergy((e: number) => Math.min(e + 5, maxEnergy))
       addLog('⚡ RARE DROP! Energy Pack +5 - sent to INVENTORY')
     }
     addLog(`Did ${job.name} +$${cashE} [${np}%]`);
@@ -268,7 +281,7 @@ export default function Game() {
         </div>
       )}
 
-      <div className="bg-[#1a1a1a] border-b border-[#222] px-6 py-2 flex gap-4 text- font-bold flex-wrap items-center w-full max-w-full overflow-hidden">
+      <div className="bg-[#1a1a1a] border-b border-[#222] px-6 py-2 flex gap-4 text-[15px] font-bold flex-wrap items-center w-full max-w-full overflow-hidden">
         <span className="text-[#f5e8c7]">💰 CASH ${cash.toFixed(0)}</span>
         <span className="flex items-center gap-2">
           <span className="text-[#e05a5a]">♥ {health}/{maxHealth}</span>
@@ -278,7 +291,7 @@ export default function Game() {
             </button>
           )}
         </span>
-        <span className="text-[#f5c842]">⚡ {energy}/{maxEnergy}</span>
+        <span className="text-[#f5c842]">⚡ {energy}/{maxEnergy} {energy < maxEnergy && <span className="text- text-[#f5c842]/60">({energyTimer}s)</span>}</span>
         <span>🏃 {maxStamina} STAMINA</span>
         <span className="text-[#888]">🔥 HEAT {heat}</span>
         <span className="text-[#8bf]">REP {rep}/{repToNext} (LVL {level})</span>
@@ -304,7 +317,7 @@ export default function Game() {
               localStorage.removeItem(SAVE_KEY);
               location.reload();
             }
-          }} className="px-3 py-1 rounded bg-[#2a1a1a] border border-[#5a2a2a] text- hover:bg-[#3a2a2a]">WIPE SAVE</button>
+          }} className="px-3 py-1 rounded bg-[#2a1a1a] border border-[#5a2a2a] text-[15px] hover:bg-[#3a2a2a]">WIPE SAVE</button>
         </div>
       </div>
 
@@ -314,13 +327,13 @@ export default function Game() {
             if (loc === currentLocation) return;
             // Ironport gate
             if (loc === 'Ironport') {
-              if (level < 35) { addLog(`Ironport locked - need LVL 35 (you are ${level})`); return; }
-              if (!owns('ferry_ticket')) { addLog(`Need Ferry Ticket from Midnight Ferry Run`); return; }
-              if (cash < 10000) { addLog(`Need $10,000 to charter to Ironport - you have $${cash}`); return; }
-              if (energy < 2) { addLog(`Too tired to travel to ${loc}`); return; }
-              setCash((c: number) => c - 10000);
-              setEnergy((e: number) => e - 2);
-              addLog(`Chartered ferry to Ironport -$10,000 -2 ENG`);
+              if (level < 32) { addLog(`Ironport locked - need LVL 32 (you are ${level})`); return; }
+              if (!owns('ferry_ticket')) { addLog(`Need Ferry Ticket from Midnight Ferry Run (5% drop)`); return; }
+              if (cash < 15000) { addLog(`Need $15,000 to charter to Ironport - you have $${cash}`); return; }
+              if (energy < 3) { addLog(`Too tired to travel to ${loc}`); return; }
+              setCash((c: number) => c - 15000);
+              setEnergy((e: number) => e - 3);
+              addLog(`Chartered ferry to Ironport -$15,000 -3 ENG`);
               setCurrentLocation(loc);
               return;
             }
@@ -348,7 +361,7 @@ export default function Game() {
                   <div className="text-[15px] text-[#888]">{filteredJobs.filter(j => canDoJob(j)).length} available</div>
                 </div>
               </div>
-              <div className="hidden lg:grid grid-cols-[2.2fr_1fr_1.2fr_120px] bg-[#1e1e1e] border-b border-[#2a2a2a] px-4 py-2 text- font-black text-[#666]"><div>DESCRIPTION</div><div>PAYOUT</div><div>REQUIRES</div><div className="text-right">ACTION</div></div>
+              <div className="hidden lg:grid grid-cols-[2.2fr_1fr_1.2fr_120px] bg-[#1e1e1e] border-b border-[#2a2a2a] px-4 py-2 text-[15px] font-black text-[#666]"><div>DESCRIPTION</div><div>PAYOUT</div><div>REQUIRES</div><div className="text-right">ACTION</div></div>
               {filteredJobs.map(job => {
                 const pct = progress[job.id] || 0;
                 const locked = !canDoJob(job);
@@ -357,7 +370,7 @@ export default function Game() {
                 const totalEng = job.eng + extra;
 
                 return (
-                  <div key={job.id} className={`grid grid-cols-1 lg:grid-cols-[2.2fr_1fr_1.2fr_120px] px-4 py-3 border-b border-[#1a1a1a] gap-3 lg:gap-0 lg:items-center ${locked ? 'opacity-50 bg-[#111]' : 'bg-[#151515] hover:bg-[#1a1a1a]'} text-`}>
+                  <div key={job.id} className={`grid grid-cols-1 lg:grid-cols-[2.2fr_1fr_1.2fr_120px] px-4 py-3 border-b border-[#1a1a1a] gap-3 lg:gap-0 lg:items-center ${locked ? 'opacity-50 bg-[#111]' : 'bg-[#151515] hover:bg-[#1a1a1a]'} text-[15px]`}>
                     <div className="flex gap-3">
                       <div className="text-xl">{job.icon}</div>
                       <div>
@@ -368,10 +381,11 @@ export default function Game() {
                         <div className="text-[15px] text-[#666]">LVL {job.lvl}+ {pct > 0 ? `[${pct}%]` : ''} • {job.desc}</div>
                       </div>
                     </div>
-                    <div className="flex lg:block gap-3 text-"><span className="text-[#8f8]">${job.cashMin}-${job.cashMax}</span><span className="text-[#888]">REP +{job.rep}</span></div>
+                    <div className="flex lg:block gap-3 text-[15px]"><span className="text-[#8f8]">${job.cashMin}-${job.cashMax}</span><span className="text-[#888]">REP +{job.rep}</span></div>
                     <div className="flex gap-1 flex-wrap">
                       {job.needs.length ? job.needs.map(n => {
                         const owned = owns(n);
+                        const item = ITEMS.find(i => i.id === n);
                         return (
                           <button
                             key={n}
@@ -379,11 +393,11 @@ export default function Game() {
                               setTab('SHOP');
                               setHighlightedShopItem(n);
                               setTimeout(() => setHighlightedShopItem(null), 3000); // clear glow after 3s
-                              addLog(`Looking for ${n} in shop`);
+                              addLog(`Looking for ${item?.name || n} in shop`);
                             }}
-                            className={`px-2 py-0.5 rounded text-[15px] border cursor-pointer hover:scale-105 transition-all ${owned ? 'bg-[#1a2e1a] text-[#6f6] border-[#2a4a2a] hover:border-[#4a8a4a]' : 'bg-[#2e1a1a] text-[#f88] border-[#4a2a2a] hover:border-[#f88] hover:bg-[#3a2222]'}`}
+                            className={`px-2 py-0.5 rounded text-[15px] border cursor-pointer hover:scale-105 transition-all ${owned ? 'bg-[#1a2e1a] text-[#6f6] border-[#2a4a2a] hover:border-[#4a8a4a]' : 'bg-[#2e1a1a] text-[#f88] border-[#4a2a2a] hover:border-[#8a4a4a]'}`}
                           >
-                            {ITEMS.find(i => i.id === n)?.icon} {n}
+                            {item?.icon} {item?.name || n}
                           </button>
                         )
                       }) : <span className="text-[#555] text-[15px]">None</span>}
@@ -422,7 +436,7 @@ export default function Game() {
                             <div className="flex gap-2 items-center">
                               <span>{item.icon}</span>
                               <div>
-                                <div className="font-bold text-[#ddd]">{item.name} {count > 0 && <span className="text-[#f5e8c7]">x{count}</span>}</div>
+                                <div className="font-bold text-[#ddd] flex items-center gap-2">{item.name} {count > 0 && <span className="text-[#f5e8c7]">x{count}</span>} <span className="text-[#f5c842] text- font-normal">{item.cost === 0 ? 'FREE' : `$${item.cost.toLocaleString()}`}</span></div>
                                 <div className="text-xs text-[#666]">{item.desc}</div>
                               </div>
                             </div>
@@ -437,7 +451,7 @@ export default function Game() {
                                       addLog(`Bought ${item.name} x${qty} -$${total}`);
                                     }}
                                     className={`px-2 py-1 rounded text-xs font-black ${cash >= total ? 'bg-[#f5e8c7] text-black' : 'bg-[#222] text-[#555]'}`}>
-                                    x{qty}
+                                    x{qty} (${(item.cost * qty).toLocaleString()})
                                   </button>
                                 )
                               })}
@@ -491,37 +505,29 @@ export default function Game() {
 
           {tab === 'SKILLS' && (
             <div className="space-y-2">
-              <div className="bg-[#171717] rounded-lg p-4 border border-[#f5c842]/30 text-"><span className="font-black">YOU HAVE {skillPoints} POINTS</span> <span className="text-[#666]">- LVL {level} → {level + 1} needs {repToNext} REP</span></div>
-              {[{ id: 'toughness', name: 'Toughness', desc: `+10 Max HP (Now ${maxHealth} HP)`, val: skills.toughness }, { id: 'endurance', name: 'Endurance', desc: `+5 Max Energy (Now ${maxEnergy} ENG)`, val: skills.endurance }, { id: 'stamina', name: 'Stamina', desc: `+2 Max Stamina (Now ${maxStamina})`, val: skills.stamina }, { id: 'muscle', name: 'Muscle', desc: `+12% Cash (Now x${cashBonus.toFixed(2)})`, val: skills.muscle }, { id: 'cool', name: 'Cool', desc: `-${(heatReduction * 100).toFixed(0)}% Heat`, val: skills.cool }].map(s => (
-                <div key={s.id} className="bg-[#151515] border border-[#222] rounded-lg px-4 py-3 flex justify-between items-center"><div><div className="font-bold text-">{s.name} LVL {s.val}</div><div className="text- text-[#666]">{s.desc}</div></div><button disabled={skillPoints <= 0} onClick={() => spendPoint(s.id as any)} className={`px-4 py-1.5 rounded text- font-black ${skillPoints > 0 ? 'bg-[#f5e8c7] text-black' : 'bg-[#222] text-[#555]'}`}>+1</button></div>
+              <div className="bg-[#171717] rounded-lg p-4 border border-[#f5c842]/30 text-[15px]"><span className="font-black">YOU HAVE {skillPoints} POINTS</span> <span className="text-[#666]">- LVL {level} → {level + 1} needs {repToNext} REP</span></div>
+              {[{ id: 'toughness', name: 'Toughness', desc: `+10 Max HP (Now ${maxHealth} HP)`, val: skills.toughness }, { id: 'endurance', name: 'Endurance', desc: `+5 Max Energy (Now ${maxEnergy} ENG)`, val: skills.endurance }, { id: 'stamina', name: 'Stamina', desc: `+2 Max Stamina (Now ${maxStamina})`, val: skills.stamina }, { id: 'muscle', name: 'Muscle', desc: `+2% Cash (Now x${cashBonus.toFixed(2)})`, val: skills.muscle }, { id: 'cool', name: 'Cool', desc: `-${(heatReduction * 100).toFixed(0)}% Heat`, val: skills.cool }].map(s => (
+                <div key={s.id} className="bg-[#151515] border border-[#222] rounded-lg px-4 py-3 flex justify-between items-center"><div><div className="font-bold text-[15px]">{s.name} LVL {s.val}</div><div className="text-[15px] text-[#666]">{s.desc}</div></div><button disabled={skillPoints <= 0} onClick={() => spendPoint(s.id as any)} className={`px-4 py-1.5 rounded text-[15px] font-black ${skillPoints > 0 ? 'bg-[#f5e8c7] text-black' : 'bg-[#222] text-[#555]'}`}>+1</button></div>
               ))}
             </div>
           )}
         </div>
 
-
-
-
-        {/* RIGHT LEDGER - STICKY */}
         <div className="lg:sticky lg:top-6 h-fit space-y-3">
           <div className="bg-[#f5e8c7] text-black rounded-xl p-4">
-            <div className="flex justify-between items-center mb-3">
-              <div className="text- font-black tracking-widest">LEDGER</div>
+            <div className="flex justify-between items-center mb-2">
+              <div className="text-[11px] font-black tracking-widest">LEDGER</div>
               <div className="flex gap-2 items-center">
-                <div className="text- bg-black/10 px-2 py-0.5 rounded-full">{ledger.length} LOGS</div>
-                <button
-                  onClick={() => setLedger(['Ledger cleared. Fresh start in Port Haven.'])}
-                  className="text- font-black px-2 py-1 rounded bg-black/15 hover:bg-black/25 border border-black/10"
-                >
-                  CLEAR
-                  <div className="text- text-black/60 mt-2">Autosaves to browser</div>
-                </button>
+                <div className="text-[11px] bg-black/10 px-2 py-0.5 rounded-full">{ledger.length} LOGS</div>
+                <button onClick={() => setLedger(['Ledger cleared.'])} className="text-[11px] font-black px-2 py-1 rounded bg-black/15 hover:bg-black/25 border border-black/10">CLEAR</button>
               </div>
             </div>
-            <div className="h-[420px] overflow-y-auto text- space-y-1 font-mono pr-1">{ledger.map((l, i) => <div key={i} className="border-b border-black/10 py-1 leading-tight">{l}</div>)}</div>
+            <div className="text-[11px] text-black/60 mb-2">Autosaves to browser</div>
+            <div className="h-[420px] overflow-y-auto text-[11px] space-y-1 font-mono pr-1">{ledger.map((l, i) => <div key={i} className="border-b border-black/10 py-1 leading-tight">{l}</div>)}</div>
           </div>
         </div>
       </div>
     </div>
+
   );
 }
