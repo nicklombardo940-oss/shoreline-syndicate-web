@@ -441,20 +441,17 @@ export default function Game() {
                               </div>
                             </div>
                             <div className="flex gap-1">
-                              {[1, 5, 10].map(qty => {
-                                const total = item.cost * qty;
-                                return (
-                                  <button key={qty} disabled={cash < total}
-                                    onClick={() => {
-                                      setCash(c => c - total);
-                                      setOwned(o => ({ ...o, [item.id]: (o[item.id] || 0) + qty }));
-                                      addLog(`Bought ${item.name} x${qty} -$${total}`);
-                                    }}
-                                    className={`px-2 py-1 rounded text-xs font-black ${cash >= total ? 'bg-[#f5e8c7] text-black' : 'bg-[#222] text-[#555]'}`}>
-                                    x{qty} (${(item.cost * qty).toLocaleString()})
-                                  </button>
-                                )
-                              })}
+                              <button
+                                disabled={count > 0 || cash < item.cost}
+                                onClick={() => {
+                                  setCash(c => c - item.cost);
+                                  setOwned(o => ({ ...o, [item.id]: 1 }));
+                                  addLog(`Bought ${item.name} -$${item.cost}`);
+                                }}
+                                className={`px-3 py-1.5 rounded text-xs font-black ${count > 0 ? 'bg-[#1a2e1a] text-[#6f6]' : cash >= item.cost ? 'bg-[#f5e8c7] text-black' : 'bg-[#222] text-[#555]'}`}
+                              >
+                                {count > 0 ? 'OWNED' : `BUY $${item.cost.toLocaleString()}`}
+                              </button>
                             </div>
                           </div>
                         )
