@@ -13,13 +13,23 @@ const JOBS: Job[] = [
   { id: 'bait_shop', name: 'SHAKE DOWN BAIT SHOP', area: 'Port Haven', lvl: 9, eng: 12, cashMin: 600, cashMax: 900, rep: 28, heat: 6, order: 5, needs: ['bolt_cutters'], desc: 'Worm buckets and cash register.', icon: '🪱' },
   { id: 'arcade', name: 'RUN THE ARCADE', area: 'Port Haven', lvl: 11, eng: 15, cashMin: 850, cashMax: 1200, rep: 32, heat: 7, order: 6, needs: ['brass_knuckles'], desc: 'Tourist kids losing quarters.', icon: '🕹' },
   { id: 'fish_market', name: 'SECURE FISH MARKET', area: 'Port Haven', lvl: 13, eng: 18, cashMin: 1300, cashMax: 1900, rep: 45, heat: 8, order: 7, needs: ['dock_hook', 'bolt_cutters'], desc: 'Morning catch tax.', icon: '🐟' },
-  { id: 'harbor_motel', name: 'TAKE OVER MOTEL', area: 'Port Haven', lvl: 15, eng: 21, cashMin: 1700, cashMax: 2400, rep: 58, heat: 9, order: 8, needs: ['motel_master_key', 'burner_phone'], desc: 'Rent by the hour, pay by the week.', icon: '🏨' },
+  { id: 'harbor_motel', name: 'TAKE OVER MOTEL', area: 'Port Haven', lvl: 15, eng: 15, cashMin: 1700, cashMax: 2400, rep: 72, heat: 9, order: 8, needs: ['motel_master_key', 'burner_phone'], desc: 'Rent by the hour, pay by the week.', icon: '🏨' },
   { id: 'diner', name: 'SKIM THE DINER', area: 'Port Haven', lvl: 18, eng: 24, cashMin: 2000, cashMax: 2800, rep: 62, heat: 10, order: 9, needs: ['burner_phone', 'box_cutter'], desc: 'Main Wharf greasy spoon.', icon: '🍳' },
   { id: 'car_wash', name: 'CONTROL THE CAR WASH', area: 'Port Haven', lvl: 21, eng: 24, cashMin: 2600, cashMax: 3600, rep: 75, heat: 11, order: 10, needs: ['rusted_pickup', 'fuel_siphon'], desc: 'Launder money and trucks.', icon: '🚿' },
   { id: 'fuel_dock', name: 'HEIST THE FUEL DOCK', area: 'Port Haven', lvl: 24, eng: 27, cashMin: 3200, cashMax: 4500, rep: 85, heat: 12, order: 11, needs: ['fuel_siphon', 'harbor_runner'], desc: 'Diesel is liquid gold.', icon: '⛽' },
   { id: 'mini_golf', name: 'RIG THE MINI GOLF', area: 'Port Haven', lvl: 27, eng: 25, cashMin: 3800, cashMax: 5200, rep: 95, heat: 13, order: 12, needs: ['golf_cart', 'bolt_cutters'], desc: 'Windmill hole always wins.', icon: '⛳' },
   { id: 'souvenir_row', name: 'OWN SOUVENIR ROW', area: 'Port Haven', lvl: 30, eng: 24, cashMin: 4500, cashMax: 6200, rep: 110, heat: 14, order: 13, needs: ['bait_trawler', 'brass_knuckles'], desc: 'Tourist trap row now yours.', icon: '🎁' },
-  { id: 'harbor_bar', name: 'BUY THE HARBOR BAR', area: 'Port Haven', lvl: 33, eng: 27, cashMin: 5500, cashMax: 7800, rep: 130, heat: 15, order: 14, needs: ['bait_trawler', 'motel_master_key', 'harbor_runner'], desc: 'Endgame - whole harbor drinks to you.', icon: '🍺' },
+  { id: 'harbor_bar', name: 'BUY THE HARBOR BAR', area: 'Port Haven', lvl: 33, eng: 27, cashMin: 5500, cashMax: 7800, rep: 130, heat: 15, order: 14, needs: ['bait_trawler', 'motel_master_key', 'harbor_runner'], desc: 'whole harbor drinks to you.', icon: '🍺' },
+  { id: 'boatyard', name: 'CONTROL THE BOATYARD', area: 'Port Haven', lvl: 36, eng: 28, cashMin: 6200, cashMax: 8500, rep: 145, heat: 16, order: 15, needs: ['bait_trawler', 'drydock_crane'], desc: 'Dry dock pays protection now.', icon: '🛥' },
+  { id: 'lobster_wharf', name: 'TAKE THE LOBSTER WHARF', area: 'Port Haven', lvl: 39, eng: 30, cashMin: 7000, cashMax: 9500, rep: 160, heat: 17, order: 16, needs: ['bait_trawler', 'lobster_permit', 'harbor_runner'], desc: 'Lobster traps and laundering.', icon: '🦞' },
+  { id: 'lighthouse', name: 'SMUGGLE AT LIGHTHOUSE', area: 'Port Haven', lvl: 42, eng: 31, cashMin: 8000, cashMax: 11000, rep: 175, heat: 18, order: 17, needs: ['lighthouse_key', 'burner_phone'], desc: 'Beacon is your drop point.', icon: '🗼' },
+  { id: 'cannery', name: 'RUN THE CANNERY', area: 'Port Haven', lvl: 45, eng: 32, cashMin: 9000, cashMax: 12500, rep: 190, heat: 19, order: 18, needs: ['cannery_press', 'rusted_pickup', 'fuel_siphon'], desc: 'Fish cannery front for product.', icon: '🥫' },
+  { id: 'yacht_club', name: 'SHAKE DOWN YACHT CLUB', area: 'Port Haven', lvl: 48, eng: 33, cashMin: 10200, cashMax: 14000, rep: 210, heat: 20, order: 19, needs: ['yacht_keys', 'golf_cart', 'motel_master_key'], desc: 'Rich kids pay to dock.', icon: '⛵' },
+  { id: 'customs_dock', name: 'HEIST CUSTOMS DOCK', area: 'Port Haven', lvl: 51, eng: 34, cashMin: 11500, cashMax: 15800, rep: 230, heat: 21, order: 20, needs: ['customs_badge', 'harbor_runner', 'dock_hook'], desc: 'Containers full of untaxed goods.', icon: '📦' },
+  { id: 'harbor_casino', name: 'RIG HARBOR CASINO', area: 'Port Haven', lvl: 54, eng: 35, cashMin: 13000, cashMax: 17500, rep: 250, heat: 22, order: 21, needs: ['casino_ledger', 'brass_knuckles', 'burner_phone'], desc: 'House always loses now.', icon: '🎰' },
+  { id: 'shipyard', name: 'OWN THE SHIPYARD', area: 'Port Haven', lvl: 57, eng: 36, cashMin: 14500, cashMax: 19500, rep: 270, heat: 23, order: 22, needs: ['drydock_crane', 'cannery_press', 'fuel_siphon'], desc: 'Every hull in the harbor is yours.', icon: '🚢' },
+  { id: 'port_authority', name: 'BUY PORT AUTHORITY', area: 'Port Haven', lvl: 60, eng: 38, cashMin: 16500, cashMax: 22000, rep: 295, heat: 24, order: 23, needs: ['customs_badge', 'yacht_keys', 'bait_trawler'], desc: 'You ARE the harbor now.', icon: '🏛' },
+  { id: 'harbor_empire', name: 'HARBOR EMPIRE', area: 'Port Haven', lvl: 64, eng: 40, cashMin: 18500, cashMax: 25000, rep: 320, heat: 25, order: 24, needs: ['drydock_crane', 'lobster_permit', 'lighthouse_key', 'cannery_press', 'casino_ledger'], desc: 'Final - Port Haven bows to you.', icon: '👑' },
 ];
 
 const ITEMS: Item[] = [
@@ -35,7 +45,14 @@ const ITEMS: Item[] = [
   { id: 'rusted_pickup', name: 'Rusted Pickup', type: 'vehicle', cost: 3200, desc: 'Car wash workhorse.', icon: '🛻' },
   { id: 'golf_cart', name: 'Golf Cart', type: 'vehicle', cost: 4500, desc: 'Mini golf patrol.', icon: '🛺' },
   { id: 'bait_trawler', name: 'Bait Trawler', type: 'vehicle', cost: 6800, desc: 'Own the whole harbor.', icon: '🎣' },
-  { id: 'ferry_ticket', name: 'Ferry Ticket', type: 'tool', cost: 0, desc: 'Rare drop from Midnight Ferry Run. Required for Ironport.', icon: '🎟️' },
+  { id: 'ferry_ticket', name: 'Ferry Ticket', type: 'tool', cost: 0, desc: 'Rare drop from Midnight Ferry Run. Required for Ironport.', icon: '🎟️' },  
+  { id: 'drydock_crane', name: 'Drydock Crane', type: 'vehicle', cost: 8200, desc: 'Lift hulls out the water.', icon: '🏗' },
+  { id: 'lobster_permit', name: 'Harpoon Gun', type: 'weapon', cost: 9500, desc: 'For lobsters and legs.', icon: '🔱' },
+  { id: 'lighthouse_key', name: 'Lighthouse Key', type: 'tool', cost: 10800, desc: 'Top of the beacon is your stash.', icon: '🔦' },
+  { id: 'cannery_press', name: 'Fillet Cleaver', type: 'weapon', cost: 12200, desc: 'Cuts fish and problems.', icon: '🪓' },
+  { id: 'yacht_keys', name: 'Yacht Club Keys', type: 'tool', cost: 13800, desc: 'VIP slips pay double.', icon: '⛵' },
+  { id: 'customs_badge', name: 'Customs Badge', type: 'tool', cost: 15500, desc: 'Wave containers through.', icon: '🛃' },
+  { id: 'casino_ledger', name: 'Dock Slugger', type: 'weapon', cost: 17800, desc: 'Casino collections.', icon: '🏏' },
 ];
 
 const LOCATIONS = ["Port Haven", "Ironport"] as const;
@@ -148,6 +165,7 @@ export default function Game() {
         if (s.isInJail !== undefined) setIsInJail(s.isInJail);
         if (s.jailTime !== undefined) setJailTime(s.jailTime);
         if (s.isInHospital !== undefined) setIsInHospital(s.isInHospital);
+        if (s.inventory) setInventory(s.inventory);
       } catch { }
     }
     setIsReady(true);
@@ -395,45 +413,45 @@ export default function Game() {
           )}
 
           {tab === 'INVENTORY' && (
-          <div className="space-y-4 max-w- w-full mr-auto ml-0">
-            <div className="bg-[#121212] border border-[#2a2a2a] rounded-lg overflow-hidden">
-              <div className="bg-[#1e1e1e] border-b border-[#2a2a2a] px-4 py-2 flex justify-between">
-                <div className="font-black text-[#f5e8c7]">INVENTORY ({inventory.energyPacks})</div>
-                <div className="text-[#666] text-xs">Rare drops</div>
-              </div>
-              <div className="p-4">
-                {inventory.energyPacks > 0 ? (
-                  <div className="flex justify-between items-center bg-[#171717] p-3 rounded border border-[#f5e8c7]/20">
-                    <div className="flex gap-2 items-center">
-                      <span>⚡</span>
-                      <div>
-                        <div className="font-bold text-[#ddd]">Energy Pack</div>
-                        <div className="text-xs text-[#888]">+5 Energy</div>
+            <div className="space-y-4 max-w- [700px] w-full mr-auto ml-0">
+              <div className="bg-[#121212] border border-[#2a2a2a] rounded-lg overflow-hidden">
+                <div className="bg-[#1e1e1e] border-b border-[#2a2a2a] px-4 py-2 flex justify-between">
+                  <div className="font-black text-[#f5e8c7]">INVENTORY ({inventory.energyPacks})</div>
+                  <div className="text-[#666] text-xs">Rare drops</div>
+                </div>
+                <div className="p-4">
+                  {inventory.energyPacks > 0 ? (
+                    <div className="flex justify-between items-center bg-[#171717] p-3 rounded border border-[#f5e8c7]/20">
+                      <div className="flex gap-2 items-center">
+                        <span>⚡</span>
+                        <div>
+                          <div className="font-bold text-[#ddd]">Energy Pack</div>
+                          <div className="text-xs text-[#888]">+5 Energy</div>
+                        </div>
+                        <span className="ml-2 text-[#f5e8c7] font-black">x{inventory.energyPacks}</span>
                       </div>
-                      <span className="ml-2 text-[#f5e8c7] font-black">x{inventory.energyPacks}</span>
+                      <button
+                        onClick={() => {
+                          if (inventory.energyPacks <= 0) return;
+                          if (energy >= maxEnergy) { addLog('Energy already full'); return; }
+                          setInventory((i: any) => ({ ...i, energyPacks: i.energyPacks - 1 }))
+                          setEnergy((e: number) => Math.min(e + 5, maxEnergy))
+                          addLog('Used Energy Pack +5 energy')
+                        }}
+                        className="px-4 py-1.5 rounded-full bg-[#f5e8c7] text-black font-black text-xs"
+                      >
+                        USE
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        if (inventory.energyPacks <= 0) return;
-                        if (energy >= maxEnergy) { addLog('Energy already full'); return; }
-                        setInventory((i: any) => ({ ...i, energyPacks: i.energyPacks - 1 }))
-                        setEnergy((e: number) => Math.min(e + 5, maxEnergy))
-                        addLog('Used Energy Pack +5 energy')
-                      }}
-                      className="px-4 py-1.5 rounded-full bg-[#f5e8c7] text-black font-black text-xs"
-                    >
-                      USE
-                    </button>
-                  </div>
-                ) : (
-                  <div className="p-8 text-center text-[#666] text-sm">
-                    Empty - do hustles for a 5% chance to find Energy Packs
-                  </div>
-                )}
+                  ) : (
+                    <div className="p-8 text-center text-[#666] text-sm">
+                      Empty - do hustles for a 5% chance to find Energy Packs
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
           {tab === 'SKILLS' && (
             <div className="space-y-2">
@@ -445,7 +463,7 @@ export default function Game() {
           )}
         </div>
 
-        
+
 
 
         {/* RIGHT LEDGER - STICKY */}
