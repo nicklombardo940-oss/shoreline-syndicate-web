@@ -99,6 +99,8 @@ export default function Game() {
   const [tab, setTab] = useState<'HUSTLES' | 'SHOP' | 'SKILLS' | 'INVENTORY'>('HUSTLES')
   const [isReady, setIsReady] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [showPadPrompt, setShowPadPrompt] = useState(false);
+const [padConnected, setPadConnected] = useState(false);
 
 
 
@@ -113,61 +115,65 @@ export default function Game() {
   const owns = (id: string) => (owned[id] || 0) > 0;
   const filteredJobs = JOBS.filter((j: any) => j.area === currentLocation);
 
-  // CONTROLLER SUPPORT
-  useEffect(() => {
-    let lastPress = 0;
-    let raf = 0;
-    const loop = () => {
-      const gp = navigator.getGamepads?.()[0];
-      if (gp) {
-        const now = Date.now();
-        if (now - lastPress > 150) { // debounce
-          const up = gp.buttons[12]?.pressed || gp.axes[1] < -0.5;
-          const down = gp.buttons[13]?.pressed || gp.axes[1] > 0.5;
-          const a = gp.buttons[0]?.pressed; // A / Cross - DO JOB
-          const b = gp.buttons[1]?.pressed; // B / Circle - Lay Low
-          const lb = gp.buttons[4]?.pressed;
-          const rb = gp.buttons[5]?.pressed;
-          const lt = gp.buttons[6]?.pressed;
-          const rt = gp.buttons[7]?.pressed;
+  // CONTROLLER SUPPORT - 2 BUTTON LAYOUT MODE
+useEffect(() => { setSelectedIdx(0); }, [currentLocation, tab]);
 
-          if (up) { setSelectedIdx(i => Math.max(0, i - 1)); lastPress = now; }
-          if (down) { setSelectedIdx(i => i + 1); lastPress = now; }
+useEffect(() => {
+  let lastPress = 0;
+  let raf = 0;
+  const loop = () => {
+    const gp = navigator.getGamepads?.()[0];
+    if (gp) {
+      const jobs = JOBS.filter(j => j.area === currentLocation);
+      const now = Date.now();
+      if (now - lastPress > 150) {
+        const up = gp.buttons[12]?.pressed || gp.axes[1] < -0.5;
+        const down = gp.buttons[13]?.pressed || gp.axes[1] > 0.5;
+        const a = gp.buttons[0]?.pressed;
+        const b = gp.buttons[1]?.pressed;
+        const lb = gp.buttons[4]?.pressed;
+        const rb = gp.buttons[5]?.pressed;
+        const lt = gp.buttons[6]?.pressed;
+        const rt = gp.buttons[7]?.pressed;
 
-          if (a && tab === 'HUSTLES') {
-            const job = filteredJobs[selectedIdx];
-            if (job && canDoJob(job)) doJob(job);
-            lastPress = now;
-          }
-          if (a && tab === 'SHOP') {
-            // buy selected shop item - you'd need selected shop idx too
-          }
-          if (b) { layLow(); lastPress = now; }
-          if (lb) {
-            const order = ['HUSTLES', 'SHOP', 'SKILLS', 'INVENTORY'] as const;
-            const idx = order.indexOf(tab);
-            setTab(order[(idx - 1 + 4) % 4]);
-            lastPress = now;
-          }
-          if (rb) {
-            const order = ['HUSTLES', 'SHOP', 'SKILLS', 'INVENTORY'] as const;
-            const idx = order.indexOf(tab);
-            setTab(order[(idx + 1) % 4]);
-            lastPress = now;
-          }
-          if (lt || rt) {
-            const locIdx = LOCATIONS.indexOf(currentLocation as any);
-            const next = lt ? (locIdx - 1 + LOCATIONS.length) % LOCATIONS.length : (locIdx + 1) % LOCATIONS.length;
-            setCurrentLocation(LOCATIONS[next]);
-            lastPress = now;
-          }
+        if (up) { setSelectedIdx(i => Math.max(0, i - 1)); lastPress = now; }
+        if (down) { setSelectedIdx(i => Math.min(jobs.length - 1, i + 1)); lastPress = now; }
+        if (a && tab === 'HUSTLES') {
+          const job = jobs[selectedIdx];
+          if (job) doJob(job);
+          lastPress = now;
+        }
+        if (b) { layLow(); lastPress = now; }
+        if (lb || rb) {
+          const order = ['HUSTLES','SHOP','SKILLS','INVENTORY'] as const;
+          const idx = order.indexOf(tab);
+          const next = rb? order[(idx + 1) % 4] : order[(idx - 1 + 4) % 4];
+          setTab(next); setSelectedIdx(0); lastPress = now;
+        }
+        if (lt || rt) {
+          const locIdx = LOCATIONS.indexOf(currentLocation as any);
+          const next = lt? (locIdx - 1 + LOCATIONS.length) % LOCATIONS.length : (locIdx + 1) % LOCATIONS.length;
+          setCurrentLocation(LOCATIONS[next]); setSelectedIdx(0); lastPress = now;
         }
       }
-      raf = requestAnimationFrame(loop);
-    };
+    }
     raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [tab, selectedIdx, currentLocation, filteredJobs]);
+  };
+  raf = requestAnimationFrame(loop);
+  return () => cancelAnimationFrame(raf);
+}, [tab, selectedIdx, currentLocation]);
+
+  // SHOW BANNER WHEN CONTROLLER CONNECTS
+useEffect(() => {
+  const onConnect = () => { setPadConnected(true); setShowPadPrompt(true); setTimeout(()=> setShowPadPrompt(false), 5000); };
+  const onDisconnect = () => setPadConnected(false);
+  window.addEventListener('gamepadconnected', onConnect);
+  window.addEventListener('gamepaddisconnected', onDisconnect);
+  return () => {
+    window.removeEventListener('gamepadconnected', onConnect);
+    window.removeEventListener('gamepaddisconnected', onDisconnect);
+  };
+}, []);
 
   useEffect(() => {
     const e = setInterval(() => {
@@ -356,6 +362,12 @@ export default function Game() {
           </div>
         </div>
       )}
+
+      {showPadPrompt && (
+  <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#f5e8c7] text-black px-6 py-3 rounded-full font-black text-[15px] shadow-xl animate-bounce">
+    🎮 CONTROLLER CONNECTED - Press A to play • LB/RB to change tabs
+  </div>
+)}
 
       <div className="bg-[#1a1a1a] border-b border-[#222] px-6 py-2 flex gap-4 text-[15px] font-bold flex-wrap items-center w-full max-w-full overflow-hidden">
         <span className="text-[#f5e8c7]">💰 CASH ${cash.toFixed(0)}</span>
