@@ -98,6 +98,8 @@ export default function Game() {
   const [isInHospital, setIsInHospital] = useState(false);
   const [tab, setTab] = useState<'HUSTLES' | 'SHOP' | 'SKILLS' | 'INVENTORY'>('HUSTLES')
   const [isReady, setIsReady] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState(0);
+
 
 
   const maxHealth = 100 + skills.toughness * 10;
@@ -110,6 +112,62 @@ export default function Game() {
   const addLog = (m: string) => setLedger(l => [`[${new Date().toLocaleTimeString()}] ${m}`, ...l].slice(0, 30));
   const owns = (id: string) => (owned[id] || 0) > 0;
   const filteredJobs = JOBS.filter((j: any) => j.area === currentLocation);
+
+  // CONTROLLER SUPPORT
+  useEffect(() => {
+    let lastPress = 0;
+    let raf = 0;
+    const loop = () => {
+      const gp = navigator.getGamepads?.()[0];
+      if (gp) {
+        const now = Date.now();
+        if (now - lastPress > 150) { // debounce
+          const up = gp.buttons[12]?.pressed || gp.axes[1] < -0.5;
+          const down = gp.buttons[13]?.pressed || gp.axes[1] > 0.5;
+          const a = gp.buttons[0]?.pressed; // A / Cross - DO JOB
+          const b = gp.buttons[1]?.pressed; // B / Circle - Lay Low
+          const lb = gp.buttons[4]?.pressed;
+          const rb = gp.buttons[5]?.pressed;
+          const lt = gp.buttons[6]?.pressed;
+          const rt = gp.buttons[7]?.pressed;
+
+          if (up) { setSelectedIdx(i => Math.max(0, i - 1)); lastPress = now; }
+          if (down) { setSelectedIdx(i => i + 1); lastPress = now; }
+
+          if (a && tab === 'HUSTLES') {
+            const job = filteredJobs[selectedIdx];
+            if (job && canDoJob(job)) doJob(job);
+            lastPress = now;
+          }
+          if (a && tab === 'SHOP') {
+            // buy selected shop item - you'd need selected shop idx too
+          }
+          if (b) { layLow(); lastPress = now; }
+          if (lb) {
+            const order = ['HUSTLES', 'SHOP', 'SKILLS', 'INVENTORY'] as const;
+            const idx = order.indexOf(tab);
+            setTab(order[(idx - 1 + 4) % 4]);
+            lastPress = now;
+          }
+          if (rb) {
+            const order = ['HUSTLES', 'SHOP', 'SKILLS', 'INVENTORY'] as const;
+            const idx = order.indexOf(tab);
+            setTab(order[(idx + 1) % 4]);
+            lastPress = now;
+          }
+          if (lt || rt) {
+            const locIdx = LOCATIONS.indexOf(currentLocation as any);
+            const next = lt ? (locIdx - 1 + LOCATIONS.length) % LOCATIONS.length : (locIdx + 1) % LOCATIONS.length;
+            setCurrentLocation(LOCATIONS[next]);
+            lastPress = now;
+          }
+        }
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [tab, selectedIdx, currentLocation, filteredJobs]);
 
   useEffect(() => {
     const e = setInterval(() => {
@@ -405,15 +463,15 @@ export default function Game() {
                 </div>
               </div>
               <div className="hidden lg:grid grid-cols-[2.2fr_1fr_1.2fr_120px] bg-[#1e1e1e] border-b border-[#2a2a2a] px-4 py-2 text-[15px] font-black text-[#666]"><div>DESCRIPTION</div><div>PAYOUT</div><div>REQUIRES</div><div className="text-right">ACTION</div></div>
-              {filteredJobs.map(job => {
+              {filteredJobs.map((job, idx) => {
+                const isSelected = idx === selectedIdx;
                 const pct = progress[job.id] || 0;
                 const locked = !canDoJob(job);
                 const mastery = pct >= 100 ? 3 : pct >= 50 ? 2 : pct > 0 ? 1 : 0;
                 const extra = heat >= 85 ? 3 : heat >= 60 ? 2 : heat >= 40 ? 1 : 0;
                 const totalEng = job.eng + extra;
-
                 return (
-                  <div key={job.id} className={`grid grid-cols-1 lg:grid-cols-[2.2fr_1fr_1.2fr_120px] px-4 py-3 border-b border-[#1a1a1a] gap-3 lg:gap-0 lg:items-center ${locked ? 'opacity-50 bg-[#111]' : 'bg-[#151515] hover:bg-[#1a1a1a]'} text-[15px]`}>
+                  <div key={job.id} className={`${isSelected ? 'ring-2 ring-[#f5e8c7] ' : ''}grid grid-cols-1 lg:grid-cols-[2.2fr_1fr_1.2fr_120px] px-4 py-3 border-b border-[#1a1a1a] gap-3 lg:gap-0 lg:items-center ${locked ? 'opacity-50 bg-[#111]' : 'bg-[#151515] hover:bg-[#1a1a1a]'} text-`}>
                     <div className="flex gap-3">
                       <div className="text-xl">{job.icon}</div>
                       <div>
