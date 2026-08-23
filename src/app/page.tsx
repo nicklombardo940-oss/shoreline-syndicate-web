@@ -31,7 +31,7 @@ const JOBS: Job[] = [
   { id: 'port_authority', name: 'BUY PORT AUTHORITY', area: 'Port Haven', lvl: 99, eng: 46, cashMin: 16000, cashMax: 21000, rep: 560, heat: 24, order: 23, needs: ['customs_badge', 'yacht_keys', 'bait_trawler'], desc: 'You ARE the harbor now.', icon: '🏛' },
   { id: 'harbor_empire', name: 'HARBOR EMPIRE', area: 'Port Haven', lvl: 100, eng: 48, cashMin: 18500, cashMax: 25000, rep: 640, heat: 25, order: 24, needs: ['drydock_crane', 'lobster_permit', 'lighthouse_key', 'cannery_press', 'casino_ledger'], desc: 'Final - Port Haven bows to you.', icon: '👑' },
 
-    // --- IRONPORT - RUST BELT ---
+  // --- IRONPORT - RUST BELT ---
   { id: 'scrap_yard', name: 'SCRAP THE FREIGHT YARD', area: 'Ironport', lvl: 32, eng: 22, cashMin: 1850, cashMax: 2600, rep: 120, heat: 10, order: 0, needs: [], desc: 'Copper wire and rusted freight.', icon: '🚂' },
   { id: 'tool_die', name: 'SHAKE DOWN TOOL & DIE', area: 'Ironport', lvl: 36, eng: 23, cashMin: 2300, cashMax: 3200, rep: 140, heat: 11, order: 1, needs: ['bolt_cutters'], desc: 'Machine shop owes protection.', icon: '🔩' },
   { id: 'rust_market', name: 'RUN THE RUST MARKET', area: 'Ironport', lvl: 40, eng: 24, cashMin: 2800, cashMax: 3900, rep: 160, heat: 12, order: 2, needs: ['brass_knuckles'], desc: 'Black market in the old mill.', icon: '🏚' },
@@ -73,7 +73,7 @@ const ITEMS: Item[] = [
   { id: 'casino_ledger', name: 'Dock Slugger', type: 'weapon', cost: 68000, desc: 'Casino collections.', icon: '🏏' },
 ];
 
-const LOCATIONS = ["Port Haven", "Ironport"] as const;
+const LOCATIONS = ["Port Haven", "Ironport", "Sable Dunes", "Mason Hills", "Motor City"] as const;
 const SAVE_KEY = "shoreline_save_v3_long";
 const getRepNeeded = (lvl: number) => 150 + (lvl - 1) * 85 + Math.floor(Math.pow(lvl, 2) * 1.8);
 
@@ -343,7 +343,6 @@ export default function Game() {
         {LOCATIONS.map((loc: string) => (
           <button key={loc} onClick={() => {
             if (loc === currentLocation) return;
-            // Ironport gate
             if (loc === 'Ironport') {
               if (level < 32) { addLog(`Ironport locked - need LVL 32 (you are ${level})`); return; }
               if (!owns('ferry_ticket')) { addLog(`Need Ferry Ticket from Midnight Ferry Run (5% drop)`); return; }
@@ -355,7 +354,33 @@ export default function Game() {
               setCurrentLocation(loc);
               return;
             }
-            // Normal travel
+            if (loc === 'Sable Dunes') {
+              if (level < 50) { addLog(`Sable Dunes locked - need LVL 50 (you are ${level})`); return; }
+              if (cash < 20000) { addLog(`Need $20,000 to reach Sable Dunes`); return; }
+              if (energy < 3) { addLog(`Too tired`); return; }
+              setCash(c => c - 20000); setEnergy(e => e - 3);
+              addLog(`Drove to Sable Dunes -$20k -3 ENG`);
+              setCurrentLocation(loc); return;
+            }
+            if (loc === 'Mason Hills') {
+              if (level < 70) { addLog(`Mason Hills locked - need LVL 70`); return; }
+              if (!owns('yacht_keys')) { addLog(`Need Yacht Club Keys to get into Mason Hills`); return; }
+              if (cash < 35000) { addLog(`Need $35k for Mason Hills`); return; }
+              if (energy < 3) { addLog(`Too tired`); return; }
+              setCash(c => c - 35000); setEnergy(e => e - 3);
+              addLog(`Chartered to Mason Hills -$35k`);
+              setCurrentLocation(loc); return;
+            }
+            if (loc === 'Motor City') {
+              if (level < 90) { addLog(`Motor City locked - need LVL 90`); return; }
+              if (!owns('casino_ledger') || !owns('customs_badge')) { addLog(`Need Casino Ledger + Customs Badge for Motor City`); return; }
+              if (cash < 50000) { addLog(`Need $50k for Motor City`); return; }
+              if (energy < 4) { addLog(`Too tired`); return; }
+              setCash(c => c - 50000); setEnergy(e => e - 4);
+              addLog(`Took the convoy to Motor City -$50k -4 ENG`);
+              setCurrentLocation(loc); return;
+            }
+            // Normal travel (Port Haven)
             if (energy < 2) { addLog(`Too tired to travel to ${loc}`); return; }
             setEnergy((e: number) => e - 2);
             addLog(`Traveled to ${loc} -2 ENG`);
