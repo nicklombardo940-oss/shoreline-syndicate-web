@@ -30,7 +30,25 @@ const JOBS: Job[] = [
   { id: 'shipyard', name: 'OWN THE SHIPYARD', area: 'Port Haven', lvl: 97, eng: 44, cashMin: 14100, cashMax: 18800, rep: 510, heat: 23, order: 22, needs: ['drydock_crane', 'cannery_press', 'fuel_siphon'], desc: 'Every hull in the harbor is yours.', icon: '🚢' },
   { id: 'port_authority', name: 'BUY PORT AUTHORITY', area: 'Port Haven', lvl: 99, eng: 46, cashMin: 16000, cashMax: 21000, rep: 560, heat: 24, order: 23, needs: ['customs_badge', 'yacht_keys', 'bait_trawler'], desc: 'You ARE the harbor now.', icon: '🏛' },
   { id: 'harbor_empire', name: 'HARBOR EMPIRE', area: 'Port Haven', lvl: 100, eng: 48, cashMin: 18500, cashMax: 25000, rep: 640, heat: 25, order: 24, needs: ['drydock_crane', 'lobster_permit', 'lighthouse_key', 'cannery_press', 'casino_ledger'], desc: 'Final - Port Haven bows to you.', icon: '👑' },
+
+    // --- IRONPORT - RUST BELT ---
+  { id: 'scrap_yard', name: 'SCRAP THE FREIGHT YARD', area: 'Ironport', lvl: 32, eng: 22, cashMin: 1850, cashMax: 2600, rep: 120, heat: 10, order: 0, needs: [], desc: 'Copper wire and rusted freight.', icon: '🚂' },
+  { id: 'tool_die', name: 'SHAKE DOWN TOOL & DIE', area: 'Ironport', lvl: 36, eng: 23, cashMin: 2300, cashMax: 3200, rep: 140, heat: 11, order: 1, needs: ['bolt_cutters'], desc: 'Machine shop owes protection.', icon: '🔩' },
+  { id: 'rust_market', name: 'RUN THE RUST MARKET', area: 'Ironport', lvl: 40, eng: 24, cashMin: 2800, cashMax: 3900, rep: 160, heat: 12, order: 2, needs: ['brass_knuckles'], desc: 'Black market in the old mill.', icon: '🏚' },
+  { id: 'coal_train', name: 'HIJACK COAL TRAIN', area: 'Ironport', lvl: 44, eng: 25, cashMin: 3400, cashMax: 4700, rep: 180, heat: 13, order: 3, needs: ['rusted_pickup', 'fuel_siphon'], desc: 'Coal is money in Ironport.', icon: '🚃' },
+  { id: 'iron_foundry', name: 'SECURE IRON FOUNDRY', area: 'Ironport', lvl: 48, eng: 26, cashMin: 4100, cashMax: 5600, rep: 200, heat: 14, order: 4, needs: ['bait_trawler'], desc: 'Furnace runs hot day and night.', icon: '🏭' },
+  { id: 'steel_mill', name: 'SMUGGLE THROUGH STEEL MILL', area: 'Ironport', lvl: 52, eng: 27, cashMin: 4800, cashMax: 6500, rep: 230, heat: 15, order: 5, needs: ['harbor_runner', 'dock_hook'], desc: 'Molten steel hides contraband.', icon: '🔥' },
+  { id: 'box_factory', name: 'TAKE THE BOX FACTORY', area: 'Ironport', lvl: 56, eng: 28, cashMin: 5500, cashMax: 7400, rep: 250, heat: 16, order: 6, needs: ['box_cutter', 'motel_master_key'], desc: 'Cardboard empire, cash inside.', icon: '📦' },
+  { id: 'railyard', name: 'CONTROL THE RAILYARD', area: 'Ironport', lvl: 60, eng: 29, cashMin: 6200, cashMax: 8300, rep: 270, heat: 17, order: 7, needs: ['drydock_crane'], desc: 'Every rail car pays tribute.', icon: '🛤' },
+  { id: 'scrap_kings', name: 'SHAKE DOWN SCRAP KINGS', area: 'Ironport', lvl: 64, eng: 30, cashMin: 7000, cashMax: 9300, rep: 300, heat: 18, order: 8, needs: ['lobster_permit', 'bolt_cutters'], desc: 'Kings of rusted cars.', icon: '👑' },
+  { id: 'weld_shop', name: 'RUN THE WELD SHOP', area: 'Ironport', lvl: 68, eng: 32, cashMin: 7900, cashMax: 10500, rep: 330, heat: 19, order: 9, needs: ['cannery_press', 'fuel_siphon'], desc: 'Sparks and side hustles.', icon: '⚒' },
+  { id: 'iron_docks', name: 'TAKE THE IRON DOCKS', area: 'Ironport', lvl: 72, eng: 34, cashMin: 8800, cashMax: 11700, rep: 360, heat: 20, order: 10, needs: ['bait_trawler', 'lighthouse_key'], desc: 'Ironport dirty harbor.', icon: '⚓' },
+  { id: 'union_hall', name: 'HEIST THE UNION HALL', area: 'Ironport', lvl: 76, eng: 36, cashMin: 9800, cashMax: 13100, rep: 390, heat: 21, order: 11, needs: ['customs_badge', 'yacht_keys'], desc: 'Union dues are yours now.', icon: '📋' },
+  { id: 'iron_bar', name: 'BUY THE IRON BARON OFFICE', area: 'Ironport', lvl: 80, eng: 38, cashMin: 11000, cashMax: 14700, rep: 420, heat: 22, order: 12, needs: ['casino_ledger', 'motel_master_key'], desc: 'Baron bows to you.', icon: '🏢' },
+  { id: 'iron_works', name: 'OWN THE IRON WORKS', area: 'Ironport', lvl: 85, eng: 40, cashMin: 12500, cashMax: 16700, rep: 460, heat: 23, order: 13, needs: ['drydock_crane', 'cannery_press', 'customs_badge'], desc: 'Whole city works for you.', icon: '🏗' },
+  { id: 'ironport_empire', name: 'IRONPORT EMPIRE', area: 'Ironport', lvl: 90, eng: 42, cashMin: 14200, cashMax: 19000, rep: 520, heat: 24, order: 14, needs: ['drydock_crane', 'lobster_permit', 'lighthouse_key', 'cannery_press', 'casino_ledger'], desc: 'Final - Rust to riches.', icon: '🏴' },
 ];
+
 
 const ITEMS: Item[] = [
   { id: 'box_cutter', name: 'Box Cutter', type: 'tool', cost: 400, desc: 'Opens boxes and mouths.', icon: '🔪' },
@@ -217,7 +235,7 @@ export default function Game() {
     const extra = heat >= 85 ? 3 : heat >= 60 ? 2 : heat >= 40 ? 1 : 0;
     if (level < job.lvl) return false;
     if (energy < job.eng + extra) return false;
-    if (job.order > 0) { const prev = JOBS.find(j => j.order === job.order - 1); if (prev && (progress[prev.id] || 0) < 100) return false; }
+    if (job.order > 0) { const prev = JOBS.filter(j => j.area === job.area).find(j => j.order === job.order - 1); if (prev && (progress[prev.id] || 0) < 100) return false; }
     if (!job.needs.every(n => owns(n))) return false;
     return true;
   };
