@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 type Job = { id: string; name: string; area: string; lvl: number; eng: number; cashMin: number; cashMax: number; rep: number; heat: number; order: number; needs: string[]; desc: string; icon: string; };
-type Item = { id: string; name: string; type: 'tool' | 'vehicle' | 'weapon'; cost: number; desc: string; icon: string; };
+type Item = { id: string; name: string; type: 'tool' | 'vehicle' | 'weapon'; cost: number; desc: string; icon: string; area: string; };
 
 const JOBS: Job[] = [
   { id: 'marina', name: 'RUN THE MARINA', area: 'Port Haven', lvl: 1, eng: 2, cashMin: 85, cashMax: 130, rep: 16, heat: 1, order: 0, needs: [], desc: 'Shake down charter captains.', icon: '⚓' },
@@ -31,46 +31,127 @@ const JOBS: Job[] = [
   { id: 'port_authority', name: 'BUY PORT AUTHORITY', area: 'Port Haven', lvl: 99, eng: 46, cashMin: 16000, cashMax: 21000, rep: 560, heat: 24, order: 23, needs: ['customs_badge', 'yacht_keys', 'bait_trawler'], desc: 'You ARE the harbor now.', icon: '🏛' },
   { id: 'harbor_empire', name: 'HARBOR EMPIRE', area: 'Port Haven', lvl: 100, eng: 48, cashMin: 18500, cashMax: 25000, rep: 640, heat: 25, order: 24, needs: ['drydock_crane', 'lobster_permit', 'lighthouse_key', 'cannery_press', 'casino_ledger'], desc: 'Final - Port Haven bows to you.', icon: '👑' },
 
-  // --- IRONPORT - RUST BELT ---
+    // --- IRONPORT - RUST BELT (NOW USES NEW ITEMS) ---
   { id: 'scrap_yard', name: 'SCRAP THE FREIGHT YARD', area: 'Ironport', lvl: 32, eng: 22, cashMin: 1850, cashMax: 2600, rep: 120, heat: 10, order: 0, needs: [], desc: 'Copper wire and rusted freight.', icon: '🚂' },
-  { id: 'tool_die', name: 'SHAKE DOWN TOOL & DIE', area: 'Ironport', lvl: 36, eng: 23, cashMin: 2300, cashMax: 3200, rep: 140, heat: 11, order: 1, needs: ['bolt_cutters'], desc: 'Machine shop owes protection.', icon: '🔩' },
-  { id: 'rust_market', name: 'RUN THE RUST MARKET', area: 'Ironport', lvl: 40, eng: 24, cashMin: 2800, cashMax: 3900, rep: 160, heat: 12, order: 2, needs: ['brass_knuckles'], desc: 'Black market in the old mill.', icon: '🏚' },
-  { id: 'coal_train', name: 'HIJACK COAL TRAIN', area: 'Ironport', lvl: 44, eng: 25, cashMin: 3400, cashMax: 4700, rep: 180, heat: 13, order: 3, needs: ['rusted_pickup', 'fuel_siphon'], desc: 'Coal is money in Ironport.', icon: '🚃' },
-  { id: 'iron_foundry', name: 'SECURE IRON FOUNDRY', area: 'Ironport', lvl: 48, eng: 26, cashMin: 4100, cashMax: 5600, rep: 200, heat: 14, order: 4, needs: ['bait_trawler'], desc: 'Furnace runs hot day and night.', icon: '🏭' },
-  { id: 'steel_mill', name: 'SMUGGLE THROUGH STEEL MILL', area: 'Ironport', lvl: 52, eng: 27, cashMin: 4800, cashMax: 6500, rep: 230, heat: 15, order: 5, needs: ['harbor_runner', 'dock_hook'], desc: 'Molten steel hides contraband.', icon: '🔥' },
-  { id: 'box_factory', name: 'TAKE THE BOX FACTORY', area: 'Ironport', lvl: 56, eng: 28, cashMin: 5500, cashMax: 7400, rep: 250, heat: 16, order: 6, needs: ['box_cutter', 'motel_master_key'], desc: 'Cardboard empire, cash inside.', icon: '📦' },
-  { id: 'railyard', name: 'CONTROL THE RAILYARD', area: 'Ironport', lvl: 60, eng: 29, cashMin: 6200, cashMax: 8300, rep: 270, heat: 17, order: 7, needs: ['drydock_crane'], desc: 'Every rail car pays tribute.', icon: '🛤' },
-  { id: 'scrap_kings', name: 'SHAKE DOWN SCRAP KINGS', area: 'Ironport', lvl: 64, eng: 30, cashMin: 7000, cashMax: 9300, rep: 300, heat: 18, order: 8, needs: ['lobster_permit', 'bolt_cutters'], desc: 'Kings of rusted cars.', icon: '👑' },
-  { id: 'weld_shop', name: 'RUN THE WELD SHOP', area: 'Ironport', lvl: 68, eng: 32, cashMin: 7900, cashMax: 10500, rep: 330, heat: 19, order: 9, needs: ['cannery_press', 'fuel_siphon'], desc: 'Sparks and side hustles.', icon: '⚒' },
-  { id: 'iron_docks', name: 'TAKE THE IRON DOCKS', area: 'Ironport', lvl: 72, eng: 34, cashMin: 8800, cashMax: 11700, rep: 360, heat: 20, order: 10, needs: ['bait_trawler', 'lighthouse_key'], desc: 'Ironport dirty harbor.', icon: '⚓' },
-  { id: 'union_hall', name: 'HEIST THE UNION HALL', area: 'Ironport', lvl: 76, eng: 36, cashMin: 9800, cashMax: 13100, rep: 390, heat: 21, order: 11, needs: ['customs_badge', 'yacht_keys'], desc: 'Union dues are yours now.', icon: '📋' },
-  { id: 'iron_bar', name: 'BUY THE IRON BARON OFFICE', area: 'Ironport', lvl: 80, eng: 38, cashMin: 11000, cashMax: 14700, rep: 420, heat: 22, order: 12, needs: ['casino_ledger', 'motel_master_key'], desc: 'Baron bows to you.', icon: '🏢' },
-  { id: 'iron_works', name: 'OWN THE IRON WORKS', area: 'Ironport', lvl: 85, eng: 40, cashMin: 12500, cashMax: 16700, rep: 460, heat: 23, order: 13, needs: ['drydock_crane', 'cannery_press', 'customs_badge'], desc: 'Whole city works for you.', icon: '🏗' },
-  { id: 'ironport_empire', name: 'IRONPORT EMPIRE', area: 'Ironport', lvl: 90, eng: 42, cashMin: 14200, cashMax: 19000, rep: 520, heat: 24, order: 14, needs: ['drydock_crane', 'lobster_permit', 'lighthouse_key', 'cannery_press', 'casino_ledger'], desc: 'Final - Rust to riches.', icon: '🏴' },
+  { id: 'tool_die', name: 'SHAKE DOWN TOOL & DIE', area: 'Ironport', lvl: 36, eng: 23, cashMin: 2300, cashMax: 3200, rep: 140, heat: 11, order: 1, needs: ['iron_saw'], desc: 'Machine shop owes protection.', icon: '🔩' },
+  { id: 'rust_market', name: 'RUN THE RUST MARKET', area: 'Ironport', lvl: 40, eng: 24, cashMin: 2800, cashMax: 3900, rep: 160, heat: 12, order: 2, needs: ['slag_hammer'], desc: 'Black market in the old mill.', icon: '🏚' },
+  { id: 'coal_train', name: 'HIJACK COAL TRAIN', area: 'Ironport', lvl: 44, eng: 25, cashMin: 3400, cashMax: 4700, rep: 180, heat: 13, order: 3, needs: ['coal_cart'], desc: 'Coal is money in Ironport.', icon: '🚃' },
+  { id: 'iron_foundry', name: 'SECURE IRON FOUNDRY', area: 'Ironport', lvl: 48, eng: 26, cashMin: 4100, cashMax: 5600, rep: 200, heat: 14, order: 4, needs: ['foundry_mask'], desc: 'Furnace runs hot day and night.', icon: '🏭' },
+  { id: 'steel_mill', name: 'SMUGGLE THROUGH STEEL MILL', area: 'Ironport', lvl: 52, eng: 27, cashMin: 4800, cashMax: 6500, rep: 230, heat: 15, order: 5, needs: ['iron_saw', 'foundry_mask'], desc: 'Molten steel hides contraband.', icon: '🔥' },
+  { id: 'box_factory', name: 'TAKE THE BOX FACTORY', area: 'Ironport', lvl: 56, eng: 28, cashMin: 5500, cashMax: 7400, rep: 250, heat: 16, order: 6, needs: ['scrap_magnet'], desc: 'Cardboard empire, cash inside.', icon: '📦' },
+  { id: 'railyard', name: 'CONTROL THE RAILYARD', area: 'Ironport', lvl: 60, eng: 29, cashMin: 6200, cashMax: 8300, rep: 270, heat: 17, order: 7, needs: ['coal_cart', 'scrap_magnet'], desc: 'Every rail car pays tribute.', icon: '🛤' },
+  { id: 'scrap_kings', name: 'SHAKE DOWN SCRAP KINGS', area: 'Ironport', lvl: 64, eng: 30, cashMin: 7000, cashMax: 9300, rep: 300, heat: 18, order: 8, needs: ['scrap_magnet', 'slag_hammer'], desc: 'Kings of rusted cars.', icon: '👑' },
+  { id: 'weld_shop', name: 'RUN THE WELD SHOP', area: 'Ironport', lvl: 68, eng: 32, cashMin: 7900, cashMax: 10500, rep: 330, heat: 19, order: 9, needs: ['foundry_mask', 'iron_saw'], desc: 'Sparks and side hustles.', icon: '⚒' },
+  { id: 'iron_docks', name: 'TAKE THE IRON DOCKS', area: 'Ironport', lvl: 72, eng: 34, cashMin: 8800, cashMax: 11700, rep: 360, heat: 20, order: 10, needs: ['scrap_magnet', 'coal_cart', 'drydock_crane'], desc: 'Ironport dirty harbor.', icon: '⚓' },
+  { id: 'union_hall', name: 'HEIST THE UNION HALL', area: 'Ironport', lvl: 76, eng: 36, cashMin: 9800, cashMax: 13100, rep: 390, heat: 21, order: 11, needs: ['slag_hammer', 'foundry_mask', 'customs_badge'], desc: 'Union dues are yours now.', icon: '📋' },
+  { id: 'iron_bar', name: 'BUY THE IRON BARON OFFICE', area: 'Ironport', lvl: 80, eng: 38, cashMin: 11000, cashMax: 14700, rep: 420, heat: 22, order: 12, needs: ['iron_saw', 'scrap_magnet', 'coal_cart'], desc: 'Baron bows to you.', icon: '🏢' },
+  { id: 'iron_works', name: 'OWN THE IRON WORKS', area: 'Ironport', lvl: 85, eng: 40, cashMin: 12500, cashMax: 16700, rep: 460, heat: 23, order: 13, needs: ['iron_saw', 'foundry_mask', 'scrap_magnet', 'slag_hammer'], desc: 'Whole city works for you.', icon: '🏗' },
+  { id: 'ironport_empire', name: 'IRONPORT EMPIRE', area: 'Ironport', lvl: 90, eng: 42, cashMin: 14200, cashMax: 19000, rep: 520, heat: 24, order: 14, needs: ['iron_saw', 'scrap_magnet', 'foundry_mask', 'slag_hammer', 'coal_cart'], desc: 'Final - Rust to riches.', icon: '🏴' },
+
+    // --- SABLE DUNES - PARTY DUNES (NOW USES NEW ITEMS) ---
+  { id: 'dune_rentals', name: 'RUN THE DUNE RENTALS', area: 'Sable Dunes', lvl: 50, eng: 28, cashMin: 4100, cashMax: 5600, rep: 200, heat: 14, order: 0, needs: [], desc: 'Jeep rentals and overpriced coolers.', icon: '🏜' },
+  { id: 'campground', name: 'SHAKE DOWN CAMPGROUND', area: 'Sable Dunes', lvl: 53, eng: 29, cashMin: 4600, cashMax: 6200, rep: 220, heat: 15, order: 1, needs: ['bonfire_kit'], desc: 'Tents pay rent too.', icon: '⛺' },
+  { id: 'state_forest', name: 'SMUGGLE THROUGH FOREST', area: 'Sable Dunes', lvl: 56, eng: 30, cashMin: 5100, cashMax: 6900, rep: 240, heat: 16, order: 2, needs: ['dune_buggy'], desc: 'State forest back roads.', icon: '🌲' },
+  { id: 'bonfire_party', name: 'TAKE THE BONFIRE PARTY', area: 'Sable Dunes', lvl: 59, eng: 31, cashMin: 5700, cashMax: 7700, rep: 260, heat: 16, order: 3, needs: ['bonfire_kit', 'tiki_club'], desc: 'Kegs and cover charges.', icon: '🔥' },
+  { id: 'weed_farm', name: 'RUN THE WEED FARM', area: 'Sable Dunes', lvl: 62, eng: 32, cashMin: 6300, cashMax: 8500, rep: 280, heat: 17, order: 4, needs: ['lake_float'], desc: 'Behind the dunes.', icon: '🌿' },
+  { id: 'sand_bar', name: 'SECURE THE SAND BAR', area: 'Sable Dunes', lvl: 65, eng: 33, cashMin: 7000, cashMax: 9400, rep: 310, heat: 18, order: 5, needs: ['tiki_club'], desc: 'Beach bar protection.', icon: '🍹' },
+  { id: 'beach_bus', name: 'HIJACK THE BEACH BUS', area: 'Sable Dunes', lvl: 68, eng: 34, cashMin: 7800, cashMax: 10500, rep: 340, heat: 19, order: 6, needs: ['party_bus'], desc: 'Tourist bus full of cash.', icon: '🚌' },
+  { id: 'lake_store', name: 'TAKE THE LAKE STORE', area: 'Sable Dunes', lvl: 71, eng: 35, cashMin: 8600, cashMax: 11600, rep: 370, heat: 19, order: 7, needs: ['lake_float', 'bonfire_kit'], desc: 'Bait, beer, and bud.', icon: '🏪' },
+  { id: 'dune_buggies', name: 'CONTROL DUNE BUGGIES', area: 'Sable Dunes', lvl: 74, eng: 36, cashMin: 9500, cashMax: 12800, rep: 400, heat: 20, order: 8, needs: ['dune_buggy'], desc: 'Rentals at $200/hr.', icon: '🏎' },
+  { id: 'lifeguard_tower', name: 'SHAKE DOWN LIFEGUARD TOWER', area: 'Sable Dunes', lvl: 77, eng: 37, cashMin: 10500, cashMax: 14100, rep: 430, heat: 20, order: 9, needs: ['tiki_club', 'lake_float'], desc: 'Even Baywatch pays.', icon: '🛟' },
+  { id: 'festival_grounds', name: 'RUN FESTIVAL GROUNDS', area: 'Sable Dunes', lvl: 80, eng: 38, cashMin: 11600, cashMax: 15600, rep: 460, heat: 21, order: 10, needs: ['party_bus', 'bonfire_kit'], desc: 'Music fest money laundering.', icon: '🎪' },
+  { id: 'orchard_stands', name: 'TAKE THE ORCHARD STANDS', area: 'Sable Dunes', lvl: 83, eng: 39, cashMin: 12800, cashMax: 17200, rep: 500, heat: 21, order: 11, needs: ['dune_buggy', 'party_bus'], desc: 'Cherry season is your season.', icon: '🍒' },
+  { id: 'dunes_motel', name: 'BUY THE DUNES MOTEL', area: 'Sable Dunes', lvl: 86, eng: 40, cashMin: 14100, cashMax: 18900, rep: 540, heat: 22, order: 12, needs: ['tiki_club', 'lake_float', 'dune_buggy'], desc: 'No-tell motel empire.', icon: '🏨' },
+  { id: 'dune_ridge', name: 'OWN THE DUNE RIDGE', area: 'Sable Dunes', lvl: 89, eng: 42, cashMin: 15500, cashMax: 20800, rep: 580, heat: 23, order: 13, needs: ['dune_buggy', 'bonfire_kit', 'party_bus', 'tiki_club'], desc: 'Every grain of sand is yours.', icon: '⛰' },
+  { id: 'sable_empire', name: 'SABLE DUNES EMPIRE', area: 'Sable Dunes', lvl: 92, eng: 44, cashMin: 17200, cashMax: 23100, rep: 640, heat: 24, order: 14, needs: ['dune_buggy', 'party_bus', 'bonfire_kit', 'tiki_club', 'lake_float'], desc: 'Final - Dunes bow to you.', icon: '👑' },
+
+      // --- MASON HILLS - RICH HILLS (NOW USES NEW ITEMS) ---
+  { id: 'gated_community', name: 'RUN THE GATED COMMUNITY', area: 'Mason Hills', lvl: 70, eng: 34, cashMin: 8200, cashMax: 11000, rep: 340, heat: 18, order: 0, needs: [], desc: 'HOA dues now come to you.', icon: '🏘' },
+  { id: 'country_club', name: 'SHAKE DOWN COUNTRY CLUB', area: 'Mason Hills', lvl: 72, eng: 35, cashMin: 9100, cashMax: 12200, rep: 370, heat: 19, order: 1, needs: ['country_club_card'], desc: 'Old money, new boss.', icon: '🏌' },
+  { id: 'vineyard', name: 'SMUGGLE THROUGH VINEYARD', area: 'Mason Hills', lvl: 74, eng: 36, cashMin: 10000, cashMax: 13400, rep: 400, heat: 19, order: 2, needs: ['vineyard_deed'], desc: 'Wine barrels full of product.', icon: '🍷' },
+  { id: 'golf_course', name: 'TAKE THE GOLF COURSE', area: 'Mason Hills', lvl: 76, eng: 37, cashMin: 11000, cashMax: 14800, rep: 430, heat: 20, order: 3, needs: ['country_club_card', 'horse_saddle'], desc: 'Greens fees and green.', icon: '⛳' },
+  { id: 'horse_stables', name: 'SECURE THE HORSE STABLES', area: 'Mason Hills', lvl: 78, eng: 38, cashMin: 12100, cashMax: 16300, rep: 460, heat: 20, order: 4, needs: ['horse_saddle'], desc: 'Thoroughbreds and dirty cash.', icon: '🐴' },
+  { id: 'wine_truck', name: 'HIJACK THE WINE TRUCK', area: 'Mason Hills', lvl: 80, eng: 39, cashMin: 13300, cashMax: 17900, rep: 490, heat: 21, order: 5, needs: ['vineyard_deed', 'polo_mallet'], desc: '$400 bottles, $0 cost.', icon: '🚚' },
+  { id: 'hill_mansions', name: 'TAKE THE HILL MANSIONS', area: 'Mason Hills', lvl: 82, eng: 40, cashMin: 14600, cashMax: 19600, rep: 520, heat: 21, order: 6, needs: ['hilltop_keycard'], desc: 'Estate staff work for you.', icon: '🏰' },
+  { id: 'spa_resort', name: 'CONTROL THE SPA RESORT', area: 'Mason Hills', lvl: 84, eng: 41, cashMin: 16000, cashMax: 21500, rep: 560, heat: 22, order: 7, needs: ['country_club_card', 'hilltop_keycard'], desc: 'Rich wives, rich tips.', icon: '💆' },
+  { id: 'charity_gala', name: 'RUN THE CHARITY GALA', area: 'Mason Hills', lvl: 86, eng: 42, cashMin: 17500, cashMax: 23500, rep: 600, heat: 22, order: 8, needs: ['vineyard_deed', 'country_club_card'], desc: 'Launder for the elite.', icon: '🥂' },
+  { id: 'private_airfield', name: 'SHAKE DOWN AIRFIELD', area: 'Mason Hills', lvl: 88, eng: 43, cashMin: 19200, cashMax: 25800, rep: 640, heat: 23, order: 9, needs: ['hilltop_keycard', 'polo_mallet'], desc: 'Private jets, private product.', icon: '✈' },
+  { id: 'equestrian_center', name: 'TAKE EQUESTRIAN CENTER', area: 'Mason Hills', lvl: 90, eng: 44, cashMin: 21100, cashMax: 28300, rep: 680, heat: 23, order: 10, needs: ['horse_saddle', 'polo_mallet'], desc: 'Horse shows are your show.', icon: '🏇' },
+  { id: 'hills_casino', name: 'BUY THE HILLS CASINO', area: 'Mason Hills', lvl: 92, eng: 45, cashMin: 23200, cashMax: 31100, rep: 730, heat: 24, order: 11, needs: ['hilltop_keycard', 'vineyard_deed', 'yacht_keys'], desc: 'Hills house always loses.', icon: '🎲' },
+  { id: 'estate_row', name: 'SECURE ESTATE ROW', area: 'Mason Hills', lvl: 94, eng: 46, cashMin: 25500, cashMax: 34200, rep: 780, heat: 24, order: 12, needs: ['hilltop_keycard', 'country_club_card', 'horse_saddle'], desc: 'Million dollar drive pays you.', icon: '🏡' },
+  { id: 'hilltop', name: 'OWN THE HILLTOP', area: 'Mason Hills', lvl: 96, eng: 47, cashMin: 28000, cashMax: 37600, rep: 830, heat: 25, order: 13, needs: ['hilltop_keycard', 'vineyard_deed', 'polo_mallet', 'country_club_card'], desc: 'View of the whole empire.', icon: '🌄' },
+  { id: 'mason_empire', name: 'MASON HILLS EMPIRE', area: 'Mason Hills', lvl: 98, eng: 48, cashMin: 31000, cashMax: 41500, rep: 900, heat: 25, order: 14, needs: ['hilltop_keycard', 'vineyard_deed', 'horse_saddle', 'polo_mallet', 'country_club_card'], desc: 'Final - Hills bow to you.', icon: '👑' },
+
+      // --- MOTOR CITY - ENDGAME (NOW USES NEW ITEMS) ---
+  { id: 'motor_factory', name: 'SCRAP THE MOTOR FACTORY', area: 'Motor City', lvl: 90, eng: 44, cashMin: 28000, cashMax: 37600, rep: 700, heat: 22, order: 0, needs: [], desc: 'Assembly line now assembles cash.', icon: '🏭' },
+  { id: 'chop_shop', name: 'SHAKE DOWN CHOP SHOP', area: 'Motor City', lvl: 92, eng: 45, cashMin: 31000, cashMax: 41600, rep: 740, heat: 22, order: 1, needs: ['motor_press'], desc: 'Stripped cars, stacked cash.', icon: '🔧' },
+  { id: 'detroit_docks', name: 'RUN THE DETROIT DOCKS', area: 'Motor City', lvl: 94, eng: 46, cashMin: 34000, cashMax: 45600, rep: 780, heat: 23, order: 2, needs: ['detroit_keycard'], desc: 'River runs dirty.', icon: '⚓' },
+  { id: 'techno_warehouse', name: 'TAKE THE TECHNO WAREHOUSE', area: 'Motor City', lvl: 96, eng: 47, cashMin: 37500, cashMax: 50300, rep: 830, heat: 23, order: 3, needs: ['techno_key'], desc: 'Rave till you own it.', icon: '🎧' },
+  { id: 'casino_strip', name: 'SECURE THE CASINO STRIP', area: 'Motor City', lvl: 98, eng: 48, cashMin: 41000, cashMax: 55000, rep: 880, heat: 24, order: 4, needs: ['renaissance_pass'], desc: 'Motor City jackpot.', icon: '🎰' },
+  { id: 'armored_truck', name: 'HIJACK ARMORED TRUCK', area: 'Motor City', lvl: 100, eng: 49, cashMin: 45000, cashMax: 60400, rep: 930, heat: 24, order: 5, needs: ['armored_van'], desc: 'Straight out the truck.', icon: '🚛' },
+  { id: 'auto_show', name: 'CONTROL THE AUTO SHOW', area: 'Motor City', lvl: 102, eng: 50, cashMin: 49500, cashMax: 66400, rep: 990, heat: 25, order: 6, needs: ['motor_press', 'detroit_keycard'], desc: 'Every whip pays tribute.', icon: '🚗' },
+  { id: 'union_hq_motor', name: 'RUN THE UNION HQ', area: 'Motor City', lvl: 104, eng: 51, cashMin: 54500, cashMax: 73100, rep: 1050, heat: 25, order: 7, needs: ['motor_press', 'techno_key'], desc: 'Union works for you now.', icon: '📋' },
+  { id: 'downtown_highrises', name: 'TAKE DOWNTOWN HIGHRISES', area: 'Motor City', lvl: 106, eng: 52, cashMin: 60000, cashMax: 80500, rep: 1120, heat: 26, order: 8, needs: ['renaissance_pass', 'detroit_keycard'], desc: 'Glass towers, cash showers.', icon: '🏙' },
+  { id: 'riverfront_hotel', name: 'BUY THE RIVERFRONT HOTEL', area: 'Motor City', lvl: 108, eng: 53, cashMin: 66000, cashMax: 88600, rep: 1200, heat: 26, order: 9, needs: ['renaissance_pass', 'armored_van'], desc: 'Penthouse is your office.', icon: '🏨' },
+  { id: 'motor_pd', name: 'SHAKE DOWN MOTOR PD', area: 'Motor City', lvl: 110, eng: 54, cashMin: 73000, cashMax: 97900, rep: 1280, heat: 27, order: 10, needs: ['detroit_keycard', 'armored_van', 'customs_badge'], desc: 'Badge? You own the badge.', icon: '🚔' },
+  { id: 'stadium_district', name: 'SECURE STADIUM DISTRICT', area: 'Motor City', lvl: 112, eng: 55, cashMin: 80000, cashMax: 107300, rep: 1370, heat: 27, order: 11, needs: ['techno_key', 'motor_press'], desc: 'Game day is pay day.', icon: '🏟' },
+  { id: 'renaissance_tower', name: 'TAKE RENAISSANCE TOWER', area: 'Motor City', lvl: 114, eng: 56, cashMin: 88000, cashMax: 118000, rep: 1470, heat: 28, order: 12, needs: ['renaissance_pass', 'detroit_keycard', 'techno_key'], desc: 'Tallest building, biggest take.', icon: '🗼' },
+  { id: 'motor_mile', name: 'OWN THE MOTOR MILE', area: 'Motor City', lvl: 116, eng: 57, cashMin: 97000, cashMax: 130000, rep: 1580, heat: 28, order: 13, needs: ['armored_van', 'renaissance_pass', 'motor_press', 'detroit_keycard'], desc: '8 Mile is yours.', icon: '🛣' },
+  { id: 'motor_empire', name: 'MOTOR CITY EMPIRE', area: 'Motor City', lvl: 120, eng: 60, cashMin: 110000, cashMax: 150000, rep: 2000, heat: 30, order: 14, needs: ['armored_van', 'detroit_keycard', 'motor_press', 'renaissance_pass', 'techno_key'], desc: 'FINAL - You own Michigan.', icon: '👑' },
+
 ];
 
 
 const ITEMS: Item[] = [
-  { id: 'box_cutter', name: 'Box Cutter', type: 'tool', cost: 400, desc: 'Opens boxes and mouths.', icon: '🔪' },
-  { id: 'dock_hook', name: 'Dock Hook', type: 'weapon', cost: 1200, desc: 'Fish market enforcement.', icon: '🪝' },
-  { id: 'brass_knuckles', name: 'Brass Knuckles', type: 'weapon', cost: 1800, desc: 'For arcade punks.', icon: '🥊' },
-  { id: 'bolt_cutters', name: 'Bolt Cutters', type: 'tool', cost: 2200, desc: 'Bait shop locks are cheap.', icon: '🔧' },
-  { id: 'skiff', name: 'Borrowed Skiff', type: 'vehicle', cost: 2800, desc: 'Quiet harbor moves.', icon: '🛶' },
-  { id: 'burner_phone', name: 'Burner Phone', type: 'tool', cost: 4200, desc: 'Motel and diner calls.', icon: '📞' },
-  { id: 'motel_master_key', name: 'Motel Master Key', type: 'tool', cost: 5500, desc: 'Every room is your room.', icon: '🔑' },
-  { id: 'harbor_runner', name: 'Harbor Runner', type: 'vehicle', cost: 7200, desc: 'Grey Lake speed.', icon: '🚤' },
-  { id: 'fuel_siphon', name: 'Fuel Siphon Kit', type: 'tool', cost: 8500, desc: 'For the fuel dock.', icon: '🛢' },
-  { id: 'rusted_pickup', name: 'Rusted Pickup', type: 'vehicle', cost: 9800, desc: 'Car wash workhorse.', icon: '🛻' },
-  { id: 'golf_cart', name: 'Golf Cart', type: 'vehicle', cost: 13500, desc: 'Mini golf patrol.', icon: '🛺' },
-  { id: 'bait_trawler', name: 'Bait Trawler', type: 'vehicle', cost: 18500, desc: 'Own the whole harbor.', icon: '🎣' },
-  { id: 'ferry_ticket', name: 'Ferry Ticket', type: 'tool', cost: 0, desc: 'Rare drop from Midnight Ferry Run. Required for Ironport.', icon: '🎟' },
-  { id: 'drydock_crane', name: 'Drydock Crane', type: 'vehicle', cost: 24000, desc: 'Lift hulls out the water.', icon: '🏗' },
-  { id: 'lobster_permit', name: 'Harpoon Gun', type: 'weapon', cost: 28500, desc: 'For lobsters and legs.', icon: '🔱' },
-  { id: 'lighthouse_key', name: 'Lighthouse Key', type: 'tool', cost: 34000, desc: 'Top of the beacon is your stash.', icon: '🔦' },
-  { id: 'cannery_press', name: 'Fillet Cleaver', type: 'weapon', cost: 39500, desc: 'Cuts fish and problems.', icon: '🪓' },
-  { id: 'yacht_keys', name: 'Yacht Club Keys', type: 'tool', cost: 47000, desc: 'VIP slips pay double.', icon: '⛵' },
-  { id: 'customs_badge', name: 'Customs Badge', type: 'tool', cost: 56000, desc: 'Wave containers through.', icon: '🛃' },
-  { id: 'casino_ledger', name: 'Dock Slugger', type: 'weapon', cost: 68000, desc: 'Casino collections.', icon: '🏏' },
+  // --- PORT HAVEN - KEEPS EVERYTHING ORIGINAL ---
+  { id: 'box_cutter', name: 'Box Cutter', type: 'tool', cost: 400, desc: 'Opens boxes and mouths.', icon: '🔪', area: 'Port Haven' },
+  { id: 'dock_hook', name: 'Dock Hook', type: 'weapon', cost: 1200, desc: 'Fish market enforcement.', icon: '🪝', area: 'Port Haven' },
+  { id: 'brass_knuckles', name: 'Brass Knuckles', type: 'weapon', cost: 1800, desc: 'For arcade punks.', icon: '🥊', area: 'Port Haven' },
+  { id: 'bolt_cutters', name: 'Bolt Cutters', type: 'tool', cost: 2200, desc: 'Bait shop locks are cheap.', icon: '🔧', area: 'Port Haven' },
+  { id: 'skiff', name: 'Borrowed Skiff', type: 'vehicle', cost: 2800, desc: 'Quiet harbor moves.', icon: '🛶', area: 'Port Haven' },
+  { id: 'burner_phone', name: 'Burner Phone', type: 'tool', cost: 4200, desc: 'Motel and diner calls.', icon: '📞', area: 'Port Haven' },
+  { id: 'motel_master_key', name: 'Motel Master Key', type: 'tool', cost: 5500, desc: 'Every room is your room.', icon: '🔑', area: 'Port Haven' },
+  { id: 'harbor_runner', name: 'Harbor Runner', type: 'vehicle', cost: 7200, desc: 'Grey Lake speed.', icon: '🚤', area: 'Port Haven' },
+  { id: 'fuel_siphon', name: 'Fuel Siphon Kit', type: 'tool', cost: 8500, desc: 'For the fuel dock.', icon: '🛢', area: 'Port Haven' },
+  { id: 'rusted_pickup', name: 'Rusted Pickup', type: 'vehicle', cost: 9800, desc: 'Car wash workhorse.', icon: '🛻', area: 'Port Haven' },
+  { id: 'golf_cart', name: 'Golf Cart', type: 'vehicle', cost: 13500, desc: 'Mini golf patrol.', icon: '🛺', area: 'Port Haven' },
+  { id: 'bait_trawler', name: 'Bait Trawler', type: 'vehicle', cost: 18500, desc: 'Own the whole harbor.', icon: '🎣', area: 'Port Haven' },
+  { id: 'drydock_crane', name: 'Drydock Crane', type: 'vehicle', cost: 24000, desc: 'Lift hulls out the water.', icon: '🏗', area: 'Port Haven' },
+  { id: 'lobster_permit', name: 'Harpoon Gun', type: 'weapon', cost: 28500, desc: 'For lobsters and legs.', icon: '🔱', area: 'Port Haven' },
+  { id: 'lighthouse_key', name: 'Lighthouse Key', type: 'tool', cost: 34000, desc: 'Top of the beacon is your stash.', icon: '🔦', area: 'Port Haven' },
+  { id: 'cannery_press', name: 'Fillet Cleaver', type: 'weapon', cost: 39500, desc: 'Cuts fish and problems.', icon: '🪓', area: 'Port Haven' },
+  { id: 'yacht_keys', name: 'Yacht Club Keys', type: 'tool', cost: 47000, desc: 'VIP slips pay double.', icon: '⛵', area: 'Port Haven' },
+  { id: 'customs_badge', name: 'Customs Badge', type: 'tool', cost: 56000, desc: 'Wave containers through.', icon: '🛃', area: 'Port Haven' },
+  { id: 'casino_ledger', name: 'Dock Slugger', type: 'weapon', cost: 68000, desc: 'Casino collections.', icon: '🏏', area: 'Port Haven' },
+  { id: 'ferry_ticket', name: 'Ferry Ticket', type: 'tool', cost: 0, desc: 'Rare drop from Midnight Ferry Run.', icon: '🎟', area: 'Port Haven' },
+
+  // --- IRONPORT - RUST BELT NEW ---
+  { id: 'iron_saw', name: 'Iron Saw', type: 'tool', cost: 14500, desc: 'Cuts freight cars open.', icon: '🪚', area: 'Ironport' },
+  { id: 'scrap_magnet', name: 'Scrap Magnet', type: 'vehicle', cost: 21000, desc: 'Lift cars off the yard.', icon: '🧲', area: 'Ironport' },
+  { id: 'foundry_mask', name: 'Foundry Mask', type: 'tool', cost: 16800, desc: 'Breathe in the furnace.', icon: '🥽', area: 'Ironport' },
+  { id: 'slag_hammer', name: 'Slag Hammer', type: 'weapon', cost: 19500, desc: 'Ironport enforcement.', icon: '🔨', area: 'Ironport' },
+  { id: 'coal_cart', name: 'Coal Cart', type: 'vehicle', cost: 26000, desc: 'Haul black gold.', icon: '🚃', area: 'Ironport' },
+
+  // --- SABLE DUNES - PARTY DUNES NEW ---
+  { id: 'dune_buggy', name: 'Dune Buggy', type: 'vehicle', cost: 22000, desc: 'Fly over the dunes.', icon: '🏎', area: 'Sable Dunes' },
+  { id: 'party_bus', name: 'Party Bus', type: 'vehicle', cost: 18000, desc: 'Beach party shuttle.', icon: '🚌', area: 'Sable Dunes' },
+  { id: 'bonfire_kit', name: 'Bonfire Kit', type: 'tool', cost: 12500, desc: 'For beach takeovers.', icon: '🔥', area: 'Sable Dunes' },
+  { id: 'tiki_club', name: 'Tiki Club', type: 'weapon', cost: 14000, desc: 'Sand bar security.', icon: '🏏', area: 'Sable Dunes' },
+  { id: 'lake_float', name: 'Lake Float Raft', type: 'vehicle', cost: 15500, desc: 'Smuggle on the water.', icon: '🦩', area: 'Sable Dunes' },
+
+  // --- MASON HILLS - RICH HILLS NEW ---
+  { id: 'vineyard_deed', name: 'Vineyard Deed', type: 'tool', cost: 52000, desc: 'Wine country protection.', icon: '🍷', area: 'Mason Hills' },
+  { id: 'country_club_card', name: 'Country Club Card', type: 'tool', cost: 38000, desc: 'Back room access.', icon: '⛳', area: 'Mason Hills' },
+  { id: 'horse_saddle', name: 'Horse Saddle', type: 'tool', cost: 42000, desc: 'Equestrian takeover.', icon: '🐴', area: 'Mason Hills' },
+  { id: 'polo_mallet', name: 'Polo Mallet', type: 'weapon', cost: 35000, desc: 'Rich kid enforcement.', icon: '🏇', area: 'Mason Hills' },
+  { id: 'hilltop_keycard', name: 'Hilltop Keycard', type: 'tool', cost: 65000, desc: 'Gated community master.', icon: '💳', area: 'Mason Hills' },
+
+  // --- MOTOR CITY - ENDGAME NEW ---
+  { id: 'armored_van', name: 'Armored Van', type: 'vehicle', cost: 75000, desc: 'For the big score.', icon: '🚐', area: 'Motor City' },
+  { id: 'detroit_keycard', name: 'Detroit Keycard', type: 'tool', cost: 90000, desc: 'Opens Motor City.', icon: '🗝', area: 'Motor City' },
+  { id: 'motor_press', name: 'Motor Press', type: 'tool', cost: 82000, desc: 'Stamp VINs clean.', icon: '⚙', area: 'Motor City' },
+  { id: 'renaissance_pass', name: 'Renaissance Pass', type: 'tool', cost: 95000, desc: 'Tower penthouse access.', icon: '🏙', area: 'Motor City' },
+  { id: 'techno_key', name: 'Techno Warehouse Key', type: 'tool', cost: 78000, desc: 'After-hours empire.', icon: '🎧', area: 'Motor City' },
 ];
 
 const LOCATIONS = ["Port Haven", "Ironport", "Sable Dunes", "Mason Hills", "Motor City"] as const;
